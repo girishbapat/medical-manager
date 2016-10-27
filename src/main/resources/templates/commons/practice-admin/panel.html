@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+	</head>
+	<body>
+		
+		<div th:fragment="panel" class="container-fluid main-nav clearfix">
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li>
+              	<a th:class="${section == 'DOCTORS'}? current : no-current"  th:href="@{/doctor-admin/list-doctors}">
+              		<span aria-hidden="true"><i class="material-icons">face</i></span>Doctors
+                </a>
+              </li>
+              <li><a th:class="${section == 'MEDICAL_SESSIONS'}? current : no-current" th:href="@{/medical-session/practicePlace/list}">
+              	<span aria-hidden="true"><i class="material-icons">people</i></span>Patients
+                </a>
+              </li>
+              <li><a th:class="${section == 'PROFILE'}? current : no-current" th:href="@{/practice-admin/edit}">
+                <span aria-hidden="true"><i class="material-icons">account_box</i></span>Profile</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+	
+	</body>
+</html>

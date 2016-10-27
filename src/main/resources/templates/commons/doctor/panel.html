@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+	</head>
+	<body>
+		
+		<div th:fragment="panel" class="container-fluid main-nav clearfix">
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li>
+              	<a th:class="${section == 'PRACTICE_PLACES'}? current : no-current"  th:href="@{/practice-place/list}">
+              		<span aria-hidden="true"><i class="material-icons">account_balance</i></span>My Practices
+                </a>
+              </li>
+<!--               <li> -->
+<!--               	<a th:class="${section == 'PRACTICE_PLACES_ASSOCIATED'}? current : no-current"  th:href="@{/doctor/practice-places/list}"> -->
+<!--               		<span aria-hidden="true"><i class="material-icons" style="display: inline;">account_balance</i><i style="display: inline;" class="material-icons">accessibility</i></span>Practice places associated -->
+<!--                 </a> -->
+<!--               </li> -->
+              <li>
+              	<a th:class="${section == 'MEDICAL_SESSIONS'}? current : no-current"  th:href="@{/medical-session/doctor/list}">
+              		<span aria-hidden="true"><i class="material-icons">people</i></span>Patients
+                </a>
+              </li>
+              <li><a th:class="${section == 'PROFILE'}? current : no-current" th:href="@{/doctor/edit}">
+                <span aria-hidden="true"><i class="material-icons">account_box</i></span>Profile</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+	
+	</body>
+</html>

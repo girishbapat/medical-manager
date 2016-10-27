@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <title>ConsultPal Manager - Practice Admin - List Sessions</title>
+    
+    
+    <div th:replace="commons/css"></div>
+    
+    <div th:replace="commons/js"></div>
+	<script th:src="@{/js/sockjs-0.3.4.js}" type="text/javascript"></script>
+	<script th:src="@{/js/stomp.min.js}" type="text/javascript"></script>
+	<script th:src="@{/js/clipboard.min.js}" type="text/javascript"></script>		
+  
+  	  	<!-- Google Analytics -->
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		
+		ga('create', 'UA-69998168-4', 'auto');
+		ga('set', 'dimension1', "practice admin");
+		ga('send', 'pageview');
+	</script>
+  </head>
+  
+  <body class="page-header-fixed bg-1">
+<!--     <div class="modal-shiftfix"> -->
+     	<!-- Navigation -->
+      	<div class="navbar navbar-fixed-top scroll-hide">
+			<!--         header -->
+	        <div th:replace="commons/header :: header"></div>
+			<!--         end header -->
+	        
+			<!--         panel -->
+			<div th:replace="commons/practice-admin/panel :: panel"></div>
+	        
+	        <!--   END      panel -->
+	      </div>
+	
+		<div class="container-fluid main-content">
+			
+<!-- 	    	<div class="row"> -->
+<!-- 	    		<div class="col-md-12"> -->
+<!--    			    	<div class="page-title"> -->
+<!-- 					  <h1>Sessions</h1> -->
+<!-- 					</div> -->
+<!-- 	    		</div> -->
+<!-- 	    	</div> -->
+	    	<div class="row">
+	    		<div class="col-md-12 text-right" id="table-panel">
+	    			<button id="export" data-clipboard-action="copy" data-clipboard-target="#sessionToClipboard" class="btn btn-default export" disabled="disabled">Export to EPR</button>
+	    			<button id="prevData" class="btn btn-default" disabled="disabled">Previous data</button>
+	    			<button id="sendMessage" class="btn btn-default sendMessage" disabled="disabled">Send message</button>
+	    		</div>
+	    		<div class="col-md-12">
+    			    <table id="table_id" class="table-row-selected table table-striped table-bordered" cellspacing="0" width="100%">
+					    <thead>
+					        <tr>
+					            <th>Status</th>
+					            <th>Date/Time</th>
+					            <th>Name</th>
+					            <th>Date of birth</th>
+					            <th>Doctor</th>
+					        </tr>
+					    </thead>
+					    <tbody>
+	
+					    </tbody>
+					</table>
+	    		</div>
+	    	</div>
+	    	<div class="row box-symptoms-row">
+    			<div class="overlay">
+					<div class="col-md-offset-5" th:style="'background:url('+@{/image/loading.gif}+') no-repeat center center;width:80px;height:80px;'"></div>
+				</div>
+	    		<div class="col-md-12 box-symptoms" style="display: none">
+	    			<div class="title">
+	    				<h4>Session details</h4>
+	    			</div>
+	    			<div class="content col-md-12">
+	    				<div class="box col-md-12">
+	    					<div class="box-title col-md-12">
+	    						<h4>Box 1</h4>
+	    					</div>
+	    					<div class="col-md-12 col">
+<!-- 	    						<label for="description">Description</label> -->
+	    						<textarea name="description" rows="2" class="form-control"></textarea>
+	    					</div>
+	    					<div class="col-md-6 col">
+	    						<label for="answer1">How long have you had this issue?</label>
+	    						<input name="answer1" class="form-control" readonly="readonly">
+	    					</div>
+	    					<div class="col-md-6 col">
+	    						<label for="answer2">Does it affect your daily activities?</label>
+	    						<input class="form-control" name="answer2" readonly="readonly">
+	    					</div>
+	    				</div>
+	    				<div class="box col-md-12">
+	    					<div class="box-title col-md-12">
+	    						<h4>Box 2</h4>
+	    					</div>
+	    					<div class="col-md-12 col">
+	    						<textarea rows="4" class="form-control"></textarea>
+	    					</div>
+	    					<div class="col-md-6 col">
+	    						<input class="form-control">
+	    					</div>
+	    					<div class="col-md-6 col">
+	    						<input class="form-control">
+	    					</div>
+	    				</div>
+	    			</div>
+	    		</div>
+	    	</div>      
+    	</div>
+    	
+    	<div id="sessionToClipboard" style="display: none">
+    		<div id="sessionRow">[Name and Surname], [DOB] [Date and time of session]</div>
+    		<br> 
+    		<div class="symptomsRow">TextBox: 1) [text from box 1] [answer to question 1] [answer to question 2]</div> 
+    		<div class="symptomsRow">TextBox: 2) [text from box 2] [answer to question 1] [answer to question 2]</div>  
+    	</div>
+    	
+    	<div th:replace="commons/chat"></div>
+    
+    <div th:replace="commons/modals :: modals"></div>
+    
+       <script th:inline="javascript">
+
+      /*<![CDATA[*/
+	    
+         var patienNameToSearch = /*[[${patienNameToSearch}]]*/;
+
+       /*]]>*/
+	</script>    
+    <script th:src="@{/js/practice-admin/notifications.js}" type="text/javascript"></script>
+    <script th:src="@{/js/practice-admin/list-sessions.js}" type="text/javascript"></script>
+  </body>
+</html>

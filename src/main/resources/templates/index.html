@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>ConsultPal Manager</title>
+    
+    <div th:replace="commons/css"></div>
+    
+    <div th:replace="commons/js"></div>
+			
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+  </head>
+  <body class="page-header-fixed bg-1">
+    <div class="modal-shiftfix">
+      <!-- Navigation -->
+      <div class="navbar navbar-fixed-top scroll-hide">
+        <div class="container-fluid top-bar">
+          <div class="pull-right">
+            <ul class="nav navbar-nav pull-right">
+              <li class="dropdown notifications hidden-xs">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+					<i aria-hidden="true" class="material-icons">flag</i>
+                  <div class="sr-only">
+                    Notifications
+                  </div>
+                  <p class="counter">
+                    4
+                  </p>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">
+                    <div class="notifications label label-info">
+                      New
+                    </div>
+                    <p>
+                      New user connected: Jane Smith
+                    </p></a>
+                    
+                  </li>
+                  <li><a href="#">
+                    <div class="notifications label label-info">
+                      New
+                    </div>
+                    <p>
+                      New user connected: Jane Smith
+                    </p></a>
+                    
+                  </li>
+                  <li><a href="#">
+                    <div class="notifications label label-info">
+                      New
+                    </div>
+                    <p>
+                      New user connected: Jane Smith
+                    </p></a>
+                    
+                  </li>
+                  <li><a href="#">
+                    <div class="notifications label label-info">
+                      New
+                    </div>
+                    <p>
+                      New user connected: Jane Smith
+                    </p></a>
+                    
+                  </li>
+                </ul>
+              </li>
+             <li class="dropdown user hidden-xs"><a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                Dr. John Smith<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">
+                    <i class="fa fa-user"></i>My Account</a>
+                  </li>
+                  <li><a href="#">
+                    <i class="fa fa-gear"></i>Account Settings</a>
+                  </li>
+                  <li><a href="login1.html">
+                    <i class="fa fa-sign-out"></i>Logout</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <button class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="logo" href="index.html">Medic App</a>
+        </div>
+        <div class="container-fluid main-nav clearfix">
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li>
+                <a class="current" href="index.html"><span aria-hidden="true"><i class="material-icons">class</i></span>Consults</a>
+              </li>
+              <li><a href="social.html">
+                <span aria-hidden="true"><i class="material-icons">account_box</i></span>Profile</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- End Navigation -->
+      <div class="container-fluid main-content">
+        <!-- Statistics -->
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="widget-container stats-container">
+              <div class="col-md-6">
+                <div class="number">
+                  <i class="material-icons" style="font-size: 40px;">class</i>
+                  86
+                </div>
+                <div class="text">
+                  Total consults
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="number">
+                  <i class="material-icons" style="font-size: 40px;">face</i>
+                  120
+                </div>
+                <div class="text">
+                  Patients online
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+		<div class="row">
+			<div class="col-lg-12">
+			</div>	
+		</div>
+        <!-- End Statistics -->
+      </div>
+    </div>
+    <div class="style-selector">
+      <div class="style-selector-container">
+	
+
+		<div class="style-toggle closed">
+          <span aria-hidden="true"><i class="material-icons">chat</i></span>
+        </div>
+      </div>
+    </div>
+	
+	
+  </body>
+</html>

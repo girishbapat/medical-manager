@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <title>ConsultPal Manager - Doctor - List Sessions</title>
+    
+    
+    <div th:replace="commons/css"></div>
+    
+    <div th:replace="commons/js"></div>
+	<script th:src="@{/js/sockjs-0.3.4.js}" type="text/javascript"></script>
+	<script th:src="@{/js/stomp.min.js}" type="text/javascript"></script>
+	<script th:src="@{/js/clipboard.min.js}" type="text/javascript"></script>		
+ 
+ 	 <!-- Google Analytics -->
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		
+		ga('create', 'UA-69998168-4', 'auto');
+		ga('set', 'dimension1', "doctor");
+		ga('send', 'pageview');
+	</script>
+  </head>
+  
+  <body class="page-header-fixed bg-1">
+<!--     <div class="modal-shiftfix"> -->
+     	<!-- Navigation -->
+      	<div class="navbar navbar-fixed-top scroll-hide">
+			<!--         header -->
+	        <div th:replace="commons/header :: header"></div>
+			<!--         end header -->
+	        
+			<!--         panel -->
+			<div th:replace="commons/doctor/panel :: panel"></div>
+	        
+	        <!--   END      panel -->
+	      </div>
+	
+		<div class="container-fluid main-content">
+			
+<!-- 	    	<div class="row"> -->
+<!-- 	    		<div class="col-md-12"> -->
+<!--    			    	<div class="page-title"> -->
+<!-- 					  <h1>Sessions</h1> -->
+<!-- 					</div> -->
+<!-- 	    		</div> -->
+<!-- 	    	</div> -->
+<!-- 	    	<div class="row" th:if="${doctor != null && doctor.practiceLogged != null}"> -->
+<!-- 	    		<div class="col-md-7"> -->
+<!--    			    	<div class="practice-logged col-md-12"> -->
+<!-- 						<span>Logged in Practice ID: <span th:text="${doctor.practiceLogged.practiceId}" th:remove="tag"></span></span> -->
+<!-- 						<a href="javascript:void(0)" class="logout"> -->
+<!-- 							<i class="material-icons">input</i> -->
+<!-- 						</a> -->
+<!-- 						<form id="logoutForm" style="display: none" action="#" th:action="@{/doctor/practicePlace/logout}" method="post" title="logout"> -->
+						  
+<!-- 						</form> -->
+<!-- 					</div> -->
+<!-- 	    		</div> -->
+<!-- 	    	</div> -->
+	    	<div class="row">
+	    		<div class="col-md-5" th:if="${doctor != null && doctor.practiceLogged != null}">
+   			    	<div class="practice-logged col-md-12">
+						<span>Practice ID: <span th:text="${doctor.practiceLogged.practiceId}" th:remove="tag"></span></span>
+						<a href="javascript:void(0)" class="logout">
+							<i class="material-icons">input</i>
+						</a>
+						<form id="logoutForm" style="display: none" action="#" th:action="@{/doctor/practicePlace/logout}" method="post" title="logout">
+						  
+						</form>
+					</div>
+	    		</div>
+	    		
+	    		<div class="col-md-7 text-right" id="table-panel">
+	    			<button id="export" data-clipboard-action="copy" data-clipboard-target="#sessionToClipboard" class="btn btn-default export" disabled="disabled">Export to EPR</button>
+	    			<button id="allocate" class="btn btn-primary" disabled="disabled">Allocate to me</button>
+	    			<button id="prevData" class="btn btn-default" disabled="disabled">Previous data</button>
+	    			<button id="sendReport" class="btn btn-default sendReport" disabled="disabled">Send report</button>
+	    			<button id="sendMessage" class="btn btn-default sendMessage" disabled="disabled">Send message</button>
+	    		</div>
+	    		<div class="col-md-12">
+    			    <table id="table_id" class="table-row-selected table table-striped table-bordered" cellspacing="0" width="100%">
+					    <thead>
+					        <tr>
+					            <th>Status</th>
+					            <th>Date/Time</th>
+					            <th>Name</th>
+					            <th>Date of birth</th>
+					            <th>Doctor</th>
+					        </tr>
+					    </thead>
+					    <tbody>
+	
+					    </tbody>
+					</table>
+	    		</div>
+	    	</div>
+	    	
+	    	<!-- (DYNAMIC WITH JS) -->
+	    	<div class="row box-symptoms-row">
+    			<div class="overlay">
+					<div class="col-md-offset-5" th:style="'background:url('+@{/image/loading.gif}+') no-repeat center center;width:80px;height:80px;'"></div>
+				</div>
+	    		<div class="col-md-12 box-symptoms" style="display: none">
+	    			<div class="title">
+	    				<h4>Session details</h4>
+	    			</div>
+	    			<div class="content col-md-12">
+	    				<div class="box col-md-12">
+	    					<div class="box-title col-md-12">
+	    						<h4>Box 1</h4>
+	    					</div>
+	    					<div class="col-md-12 col">
+<!-- 	    						<label for="description">Description</label> -->
+	    						<textarea name="description" rows="2" class="form-control description" readonly="readonly"></textarea>
+	    					</div>
+	    					<div class="col-md-6 col">
+	    						<label for="answer1">How long have you had this issue?</label>
+	    						<input name="answer1" class="form-control">
+	    					</div>
+	    					<div class="col-md-6 col">
+	    						<label for="answer2">Does it affect your daily activities?</label>
+	    						<input class="form-control" name="answer2" readonly="readonly">
+	    					</div>
+	    				</div>
+	    				<div class="box col-md-12">
+	    					<div class="box-title col-md-12">
+	    						<h4>Box 2</h4>
+	    					</div>
+	    					<div class="col-md-12 col">
+	    						<textarea rows="4" class="form-control"></textarea>
+	    					</div>
+	    					<div class="col-md-6 col">
+	    						<input class="form-control">
+	    					</div>
+	    					<div class="col-md-6 col">
+	    						<input class="form-control">
+	    					</div>
+	    				</div>
+	    			</div>
+	    		</div>
+	    	</div>      
+    	</div>
+    	
+    	<!-- (DYNAMIC WITH JS) -->
+    	<div id="sessionToClipboard" style="display: none">
+    		<div id="sessionRow">[Name and Surname], [DOB] [Date and time of session]</div>
+    		<br> 
+    		<div class="symptomsRow">TextBox: 1) [text from box 1] [answer to question 1] [answer to question 2]</div> 
+    		<div class="symptomsRow">TextBox: 2) [text from box 2] [answer to question 1] [answer to question 2]</div>  
+    	</div>
+    	
+    	 <!-- Modal REPORT (DYNAMIC WITH JS) -->
+		<div id="modal_report" class="modal fade" role="dialog">
+		  <div class="modal-dialog">
+			<!-- Modal content-->
+		    <div class="modal-content">
+		    	  <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+			        <h4 class="modal-title">BRIEF OUTLINE OF CONSULTATION</h4>
+			        <div class="col-md-6">
+			        	<h5 class="modal-subtitle date">Date / Time: </h5>
+			        </div>
+			        <div class="col-md-6">
+			        	<h5 class="modal-subtitle patienName">Patient name: </h5>
+			        </div>
+			      </div>
+			      <div class="modal-body">
+			      	<div class="row">
+			      		<div class="issue-title col-md-5"><h4>Issues brought to consultation</h4></div>
+			      		<div class="discussed-title col-md-2"><h4>Discussed</h4></div>
+				      	<div class="additional-comments-title col-md-5"><h4>Additional comments</h4></div>
+				      	<div class="box-simptom-report col-md-12"> 
+				      		<!-- Symptom 1 -->
+				      		<div class="row symptom-row">
+				      			<div class="col-md-5">
+					      			<textarea rows="3" class="form-control simptom-detail" readonly="readonly"></textarea>
+					      		</div>
+					      		<div class="col-md-2">
+					      			<input class="discussed" type="checkbox" value="">
+					      		</div>
+					      		<div class="col-md-5">
+					      			<textarea rows="3"  class="form-control additional-comment" ></textarea>	
+					      		</div>
+				      		</div>
+				      		
+				      		<!-- Symptom 2 -->
+				      		<div class="row symptom-row">
+				      			<div class="col-md-5">
+					      			<textarea rows="3" class="form-control simptom-detail" readonly="readonly"></textarea>
+					      		</div>
+					      		<div class="col-md-2">
+					      			<input class="discussed" type="checkbox" value="">
+					      		</div>
+					      		<div class="col-md-5">
+					      			<textarea rows="3" class="form-control additional-comment" ></textarea>	
+					      		</div>
+				      		</div>
+				      	</div>	
+			      	</div>
+			      	<div class="row">
+			      		<div class="action-title col-md-3"><h4>Actions</h4></div>
+				      	<div class="discussed-title col-md-2"><h4>Discussed</h4></div>
+				      	<div class="box-action col-md-12"> 
+				      		<!-- Action 1 -->
+				      		<div class="row action-row">
+				      			<div class="col-md-3 action-label"><label>Prescribed medications</label></div>
+					      		<div class="col-md-2">
+					      			<input type="checkbox" class="discussed" value="">
+					      		</div>
+					      		<div class="col-md-7">
+					      			<textarea rows="3" class="form-control additional-comment" ></textarea>
+					      		</div>	
+					      		
+				      		</div>
+				      		
+				      		<!-- Action 2 -->
+				      		<div class="row action-row">
+				      			<div class="col-md-3 action-label"><label>Physical examination</label></div>
+					      		<div class="col-md-2">
+					      			<input type="checkbox" class="discussed" value="">
+					      		</div>
+					      		<div class="col-md-7">
+					      			<textarea rows="3" class="form-control additional-comment" ></textarea>
+					      		</div>	
+					      		
+				      		</div>
+				      		
+				      		<!-- Action 3 -->
+				      		<div class="row action-row">
+				      			<div class="col-md-3 action-label"><label>Further tests ordered</label></div>
+					      		<div class="col-md-2">
+					      			<input type="checkbox" class="discussed" value="">
+					      		</div>
+					      		<div class="col-md-7">
+					      			<textarea rows="3"  class="form-control additional-comment" ></textarea>
+					      		</div>	
+					      		
+				      		</div>
+				      		
+				      		<!-- Action 4 -->
+				      		<div class="row action-row">
+				      			<div class="col-md-3 action-label"><label>Referral made</label></div>
+					      		<div class="col-md-2">
+					      			<input type="checkbox" class="discussed" value="">
+					      		</div>
+					      		<div class="col-md-7">
+					      			<textarea rows="3" class="form-control additional-comment" ></textarea>
+					      		</div>	
+					      		
+				      		</div>
+				      		
+				      		<!-- Action 5 -->
+				      		<div class="row action-row">
+				      			<div class="col-md-3 action-label"><label>Advice given</label></div>
+					      		<div class="col-md-2">
+					      			<input type="checkbox" class="discussed" value="">
+					      		</div>
+					      		<div class="col-md-7">
+					      			<textarea rows="3" class="form-control additional-comment" ></textarea>
+					      		</div>	
+					      		
+				      		</div>
+				      		
+				      	</div>
+				      	<div class="row">
+				      		<div class="action-title col-md-12"><h4>Any other comments:</h4></div>
+					      	<div class="box-action col-md-12"> 
+					      		<textarea rows="3" class="form-control" id="other-comment"></textarea>
+				    		</div>
+				    	</div>	
+			      	</div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-primary">Send</button>
+			      </div>
+			</div>
+		  </div>
+		</div>
+	    <!-- END MODAL REPORT -->	
+    	
+    	<div th:replace="commons/chat"></div>
+    	
+    	<div th:replace="commons/modals :: modals"></div>
+    	
+    	<script th:inline="javascript">
+
+      /*<![CDATA[*/
+	    
+         var patienNameToSearch = /*[[${patienNameToSearch}]]*/;
+
+       /*]]>*/
+</script> 
+    
+    <script th:src="@{/js/doctor/notifications.js}" type="text/javascript"></script>
+    <script th:src="@{/js/doctor/list-sessions.js}" type="text/javascript"></script>
+    <script th:src="@{/js/doctor/logout.js}" type="text/javascript"></script>
+    <script th:src="@{/js/doctor/report_brief_outline_consultation.js}" type="text/javascript"></script>
+  </body>
+</html>

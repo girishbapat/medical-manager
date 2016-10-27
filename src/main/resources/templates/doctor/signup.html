@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>ConsultPal Manager - Doctor - Signup</title>
+    
+    <div th:replace="commons/css"></div>
+    
+    <div th:replace="commons/js"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.20/jquery.form-validator.min.js"></script>
+			
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+  
+  	<!-- Google Analytics -->
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		
+		ga('create', 'UA-69998168-4', 'auto');
+		ga('set', 'dimension1', "doctor");
+		ga('send', 'pageview');
+	</script>
+	<!-- End Google Analytics -->
+  </head>
+  <body class="login1">
+    <!-- Login Screen -->
+    <div class="container">
+      <div class="row">
+      	<div class="col-md-12 text-center">
+      		<img th:alt="${#httpServletRequest.contextPath}" th:src="@{/image/logo_login.png}" >
+      	</div>
+      </div>
+      <div class="row" style="margin-top: -25px;">
+      	<div class="col-md-6 col-md-offset-3 col-sm-7 col-sm-offset-3 col-xs-12">
+      		<div class="login-container">
+		        <h1>
+		          <a href="#">New Doctor</a>
+		        </h1>
+		        <form action="#" th:action="@{/doctor/create}" method="post">
+		          <div class="form-group">
+		            <input class="form-control" placeholder="Username" name="username" 
+		              data-validation-url="./user/usernameUnique"
+		            data-validation="length required server alphanumeric" data-validation-length="4-25"
+		            type="text">
+		          </div>
+		          <div class="form-group">
+		            <input class="form-control" placeholder="Password"  
+		             data-validation="required" name="password"
+		            data-validation="alphanumeric length" data-validation-length="min6"
+		            type="password">
+		          </div>
+		          <div class="form-group">
+		            <input class="form-control" placeholder="Repeat password"  name="pass_repeat"
+		            data-validation="confirmation" data-validation-confirm="password"
+		            type="password">
+		          </div>
+		          <div class="form-group">
+		            <input class="form-control" placeholder="Email" name="email" 
+		            data-validation="required email server length" data-validation-url="./user/emailUnique"
+		            data-validation-length="max50"
+		            type="text">
+		          </div>
+		          <div class="form-group">
+		            <input class="form-control" placeholder="Name" name="name" 
+		            data-validation="required length" data-validation-length="3-50"
+		            type="text">
+		          </div>
+		          <div class="form-group">
+		            <input class="form-control" placeholder="Lastname" name="lastname" 
+		            data-validation="required length" data-validation-length="3-50"
+		            type="text">
+		          </div>
+		          <div class="form-group submit text-center">
+		        	<button type="submit" class="btn btn-primary">Create account</button>  
+		          </div>
+		        </form>
+		      </div>
+      	</div>
+      </div>
+            
+    </div>
+    <!-- End Login Screen -->
+  
+  	<script>
+  	
+	  $.validate({
+	    lang: 'en',
+	    modules : 'security'
+	  });
+	</script>
+  
+  </body>
+  </html>
