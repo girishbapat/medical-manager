@@ -9,6 +9,7 @@ import ar.com.lodev.medical_manager.exception.PracticePlaceException;
 import ar.com.lodev.medical_manager.exception.UserException;
 import ar.com.lodev.medical_manager.model.PracticePlace;
 import ar.com.lodev.medical_manager.model.User;
+import ar.com.lodev.medical_manager.model.dto.DoctorDTO;
 import ar.com.lodev.medical_manager.model.dto.DoctorPracticePlaceAssociationDTO;
 import ar.com.lodev.medical_manager.model.dto.PracticePlaceDTO;
 
@@ -52,5 +53,7 @@ public interface PracticePlaceService {
 
 	PracticePlaceDTO edit(String description, String password,
 			MultipartFile photo) throws IOException;
+
+	List<DoctorDTO> listDoctorsByPracticeId(String practiceId);
 
 }

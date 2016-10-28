@@ -1,5 +1,6 @@
 package ar.com.lodev.medical_manager.component.api.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.lodev.medical_manager.component.service.PracticePlaceService;
+import ar.com.lodev.medical_manager.model.dto.DoctorDTO;
 import ar.com.lodev.medical_manager.model.dto.PracticePlaceDTO;
 
 @RestController
@@ -21,10 +23,22 @@ public class PracticePlaceRestController {
 	@Autowired
 	private PracticePlaceService practicePlaceService;
 	
+
+	
 	@RequestMapping(value="/searchByPracticeId/{practiceId}" , method=RequestMethod.GET)
 	public List<PracticePlaceDTO> searchByPracticeId(@PathVariable String practiceId){
 		List<PracticePlaceDTO> dtos = practicePlaceService.findByPracticeIdContaining(practiceId);
 		return dtos;
+	}
+	
+	@RequestMapping(value="/searchDoctorsByPracticeId/{practiceId}" , method=RequestMethod.GET)
+	public List<DoctorDTO> searchDoctorsByPracticeId(@PathVariable String practiceId){
+		List<PracticePlaceDTO> dtos = practicePlaceService.findByPracticeIdContaining(practiceId.trim());
+		List<DoctorDTO> doctors = new ArrayList<DoctorDTO>();
+		if(dtos.size()==1){
+			doctors = practicePlaceService.listDoctorsByPracticeId(dtos.get(0).getId().toString());
+		}
+		return doctors;
 	}
 
 }

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import ar.com.lodev.medical_manager.component.dao.DoctorPracticePlaceRepository;
+import ar.com.lodev.medical_manager.component.dao.DoctorRepository;
 import ar.com.lodev.medical_manager.component.dao.PracticePlaceRepository;
 import ar.com.lodev.medical_manager.component.service.DoctorService;
 import ar.com.lodev.medical_manager.component.service.PracticePlaceAssociationService;
@@ -24,8 +25,10 @@ import ar.com.lodev.medical_manager.model.Doctor;
 import ar.com.lodev.medical_manager.model.DoctorPracticePlaceAssociation;
 import ar.com.lodev.medical_manager.model.ImageEntity;
 import ar.com.lodev.medical_manager.model.PracticePlace;
+import ar.com.lodev.medical_manager.model.PracticePlaceDoctorRequestStatus;
 import ar.com.lodev.medical_manager.model.Role;
 import ar.com.lodev.medical_manager.model.User;
+import ar.com.lodev.medical_manager.model.dto.DoctorDTO;
 import ar.com.lodev.medical_manager.model.dto.DoctorPracticePlaceAssociationDTO;
 import ar.com.lodev.medical_manager.model.dto.PracticePlaceDTO;
 
@@ -38,6 +41,8 @@ public class PracticePlaceServiceImpl extends BaseService implements PracticePla
 	private UserService userService;
 	@Autowired
 	private DoctorPracticePlaceRepository doctorPlaceRepository;
+	@Autowired
+	private DoctorRepository doctorRepository;
 	@Autowired
 	private DoctorService doctorService;
 	@Autowired
@@ -151,6 +156,20 @@ public class PracticePlaceServiceImpl extends BaseService implements PracticePla
 			practiceDTOs.add(new PracticePlaceDTO(p));
 		}
 		return practiceDTOs;
+	}
+
+	@Override
+	public List<DoctorDTO> listDoctorsByPracticeId(String practiceId) {
+		Page<DoctorPracticePlaceAssociation> drPracticePlaceAssociations = 
+				doctorPlaceRepository.listByPracticePlace(Long.parseLong(practiceId), null);
+		List<DoctorDTO> doctors = new ArrayList<DoctorDTO>();
+		for (DoctorPracticePlaceAssociation a : drPracticePlaceAssociations) {
+			if(a.getStatus() == PracticePlaceDoctorRequestStatus.APPROVED){
+				DoctorDTO d = new DoctorDTO(a.getDoctor());
+				doctors.add(d);	
+			}
+		}
+		return doctors;
 	}
 	
 }
