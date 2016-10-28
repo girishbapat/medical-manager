@@ -72,6 +72,29 @@ public class MedicalSessionDoctorAdminServiceImpl extends BaseService implements
 	}
 	
 	@Override
+	@Transactional(rollbackFor={Exception.class})
+	public void deallocate(long sessionId) throws MedicalSessionException, PracticePlaceLoggedException{
+		Doctor doctor = doctorService.getEntityFromSession();
+		MedicalSession session = medicalSessionRepository.findOne(sessionId);
+		DoctorPracticePlaceAssociation association = doctor.getPracticeLogged();
+		if(!session.getPracticePlace().equals(association.getPracticePlace())){
+			throw new PracticePlaceLoggedException("You need to be logged into the practice place");
+		}
+		if(!session.isAvailableToBeTaken()){
+			session.setAvailableToBeTaken(true);
+			session.setDoctor(null);
+		}
+		
+		
+		chatMedicalSessionService.createChatForDoctor(doctor, session);
+		
+		Patient patient = session.getPatient();
+		if(patient.getGcmId()!=null && !patient.getGcmId().isEmpty()){
+			notificationService.notifyDoctorDeAllocate(doctor, patient.getGcmId());
+		}
+	}
+	
+	@Override
 	@Transactional(readOnly=true)
 	public MedicalSessionDTO find(long sessionId) throws PracticePlaceLoggedException{
 		Doctor doctor = doctorService.getEntityFromSession();

@@ -116,4 +116,31 @@ public class NotificationServiceImpl extends BaseService implements Notification
 		}
 	}
 	
+	@Override
+	@Async
+	public void notifyDoctorDeAllocate(Doctor doctor,String fcmId){
+		//{doctor id: long, doctor name: string, message: string, date: string}
+		FCMClient fcmClient = FactoryClient.buildClient(FCMClient.class);
+		
+		//build content
+//		FCMNotificationContent notificationContent = new FCMNotificationContent(doctor.getName(), ALLOCATION);
+		FCMDoctorAllocateContent dataContent = new FCMDoctorAllocateContent(new DoctorDTO(doctor));
+		
+		Map<String, Object> body = new HashMap<>();
+//		body.put("notification", notificationContent);
+		dataContent.setType("deallocation");
+		body.put("data", dataContent);
+		body.put("to", fcmId);
+		
+		Call<Void> call = fcmClient.notifyNewMessage("key="+fcmServerKey, body);
+		try {
+			Response<Void> response = call.execute();
+			if(response.code() != 200){
+				logger.error(response.errorBody());
+			}
+		} catch (IOException e) {
+			logger.error("ERROR", e);
+		}
+	}
+	
 }

@@ -61,6 +61,20 @@ public class MedicalSessionController extends BaseController{
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value="/json/deallocate" , method=RequestMethod.POST)
+	public ResponseEntity deallocate(@RequestParam long sessionId){
+		try {
+			sessionDoctorAdminService.deallocate(sessionId);
+			return ResponseEntity.status(HttpStatus.OK).body("");
+		} catch (PracticePlaceLoggedException e) {
+			logger.error(ERROR, e);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+		}catch (MedicalSessionException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+		}
+	}
+	
 	@RequestMapping(value="/doctor/list" , method=RequestMethod.GET)
 	public String dashboard(Model model,@RequestParam(required=false)String patienName){
 		DoctorDTO doctor = doctorService.getFromSession();

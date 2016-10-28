@@ -82,8 +82,10 @@ function managePanelButton(row){
 	
 	if($(row).hasClass("availableToBeTaken")){
 		$("#table-panel #allocate").prop("disabled",false);
+		$("#table-panel #deallocate").prop("disabled",true);
 	}else{
 		$("#table-panel #allocate").prop("disabled",true);
+		$("#table-panel #deallocate").prop("disabled",false);
 	}
 	
 	if($(row).hasClass("ownSession")){
@@ -220,6 +222,35 @@ $("#table-panel #allocate").click(function(e){
 		});
 	}
 });
+
+$("#table-panel #deallocate").click(function(e){
+	if(sessionId != null){
+		var data = {"sessionId":sessionId};
+		$.ajax({
+			url: "../json/deallocate",
+			method: "POST",
+			data:data,
+			success: function( data, textStatus, jqXHR) {
+				//refresh table
+				var table = $('#table_id').DataTable();
+				table.ajax.reload( null, false );
+				swal("Session de-allocated!", "The session has been de-allocated by you", "success");
+			},
+			error: function ( jqXHR, textStatus, errorThrown){
+				//refresh table
+				var table = $('#table_id').DataTable();
+				table.ajax.reload( null, false );
+				
+				if(jqXHR.status == 409 || jqXHR.status == 401){
+					swal("Error!", jqXHR.responseText, "error");
+				}else{
+					swal("Error!", "The session can not be de-allocated. Try again later please.", "error");
+				}
+			}
+		});
+	}
+});
+
 
 function listSymptoms(sessionId){
 	$(".box-symptoms-row .box-symptoms").hide();

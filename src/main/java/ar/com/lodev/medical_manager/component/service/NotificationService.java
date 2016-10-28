@@ -15,5 +15,7 @@ public interface NotificationService {
 
 	void notifyDoctorAllocate(Doctor doctor, String fcmId);
 
+	void notifyDoctorDeAllocate(Doctor doctor, String gcmId);
+
 
 }

@@ -23,6 +23,9 @@ public interface MedicalSessionDoctorAdminService {
 
 	void allocate(long sessionId) throws MedicalSessionException,
 			PracticePlaceLoggedException;
+	
+	void deallocate(long sessionId) throws MedicalSessionException,
+	PracticePlaceLoggedException;
 
 	boolean hasAccessToSession(long sessionId);
 
