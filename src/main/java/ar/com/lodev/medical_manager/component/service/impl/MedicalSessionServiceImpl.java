@@ -15,12 +15,14 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ar.com.lodev.medical_manager.component.dao.DoctorRepository;
 import ar.com.lodev.medical_manager.component.dao.MedicalSessionRepository;
 import ar.com.lodev.medical_manager.component.dao.PatientRepository;
 import ar.com.lodev.medical_manager.component.dao.PracticePlaceRepository;
 import ar.com.lodev.medical_manager.component.service.MedicalSessionService;
 import ar.com.lodev.medical_manager.exception.MedicalSessionException;
 import ar.com.lodev.medical_manager.exception.PracticePlaceException;
+import ar.com.lodev.medical_manager.model.Doctor;
 import ar.com.lodev.medical_manager.model.MedicalSession;
 import ar.com.lodev.medical_manager.model.Patient;
 import ar.com.lodev.medical_manager.model.PracticePlace;
@@ -39,6 +41,8 @@ public class MedicalSessionServiceImpl extends BaseService implements MedicalSes
 	private PracticePlaceRepository practicePlaceRepository;
 	@Autowired
 	private PatientRepository patientRepository;
+	@Autowired
+	private DoctorRepository doctorRepository;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -68,15 +72,21 @@ public class MedicalSessionServiceImpl extends BaseService implements MedicalSes
 	
 	@Override
 	@Transactional(rollbackFor={Exception.class})
-	public MedicalSessionDTO createSession(long practicePlaceId,String name,String lastname,
-			Date dateOfBirth,String gcmId,String email) throws PracticePlaceException{
+	public MedicalSessionDTO createSession(long practicePlaceId, String name,
+			String lastname, Date dateOfBirth, String gcmId, String email,
+			Date dateOfAppointment, Long doctorId) throws PracticePlaceException{
 		PracticePlace practicePlace = practicePlaceRepository.findOne(practicePlaceId);
 		if(practicePlace == null){
 			throw new PracticePlaceException("Practice Place not found");
 		}
-		Patient patient = new Patient(name, lastname, dateOfBirth,gcmId,email);
+		Patient patient = new Patient(name, lastname, dateOfBirth,gcmId,email,dateOfAppointment);
 		patient = patientRepository.save(patient);
 		MedicalSession session = new MedicalSession(patient, practicePlace,RandomStringUtils.random(6, true, true));
+		if(doctorId != null){
+			session.setAvailableToBeTaken(false);
+			Doctor doctor = doctorRepository.findOne(doctorId);
+			session.setDoctor(doctor);
+		}
 		session = medicalSessionRepository.save(session);
 				
 		return new MedicalSessionDTO(session,true);
@@ -186,5 +196,6 @@ public class MedicalSessionServiceImpl extends BaseService implements MedicalSes
 				.countSessionsFromPracticePlace(practicePlace.getId(),name);
 		return number;
 	}
+
 	
 }

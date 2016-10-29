@@ -17,17 +17,20 @@ public class Patient extends BaseEntity{
 	private User user;
 	private String gcmId;
 	private String email;
+	private Date appointmentDate;
+	
 	
 	protected Patient(){
 		
 	}
 	
-	public Patient(String name,String lastname,Date dateOfBirth,String gcmId,String email){
+	public Patient(String name,String lastname,Date dateOfBirth,String gcmId,String email,Date appointmentDate){
 		this.name = name;
 		this.lastname = lastname;
 		this.dateOfBirth = dateOfBirth;
 		this.gcmId = gcmId;
 		this.email = email;
+		this.setAppointmentDate(appointmentDate);
 	}
 	
 	
@@ -38,6 +41,14 @@ public class Patient extends BaseEntity{
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public Date getAppointmentDate() {
+		return appointmentDate;
+	}
+
+	public void setAppointmentDate(Date appointmentDate) {
+		this.appointmentDate = appointmentDate;
 	}
 
 	public String getFullName(){

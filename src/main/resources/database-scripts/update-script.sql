@@ -1,0 +1,1 @@
+ALTER TABLE patient ADD appointment_date datetime DEFAULT NULL;

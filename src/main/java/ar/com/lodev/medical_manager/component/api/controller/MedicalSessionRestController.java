@@ -40,11 +40,13 @@ public class MedicalSessionRestController {
 	@RequestMapping(value="/create" , method=RequestMethod.POST)
 	public MedicalSessionDTO create(@RequestParam String name,@RequestParam String lastname,
 			@RequestParam long dateOfBirth,@RequestParam Long practicePlaceId,
-			@RequestParam(required=false) String gcmId,@RequestParam(required=false) String email) throws Exception{
+			@RequestParam(required=false) String gcmId,@RequestParam(required=false) String email,
+			@RequestParam long dateOfAppointment, @RequestParam Long doctorId) throws Exception{
 		try {
-			Date dateOfBirthDate = new Date(dateOfBirth); 
+			Date dateOfBirthDate = new Date(dateOfBirth);
+			Date appointmentDate = new Date(dateOfAppointment);
 			MedicalSessionDTO dto = medicalSessionService.createSession(practicePlaceId, name, 
-					lastname, dateOfBirthDate,gcmId,email);
+					lastname, dateOfBirthDate,gcmId,email,appointmentDate,doctorId);
 			
 			broadCastLogin(dto);
 			

@@ -23,11 +23,13 @@ public interface MedicalSessionService {
 	 * @param dateOfBirth
 	 * @param gcmId
 	 * @param email
+	 * @param doctorId 
+	 * @param dateOfAppointment 
 	 * @return
 	 * @throws PracticePlaceException
 	 */
 	MedicalSessionDTO createSession(long practicePlaceId, String name,
-			String lastname, Date dateOfBirth, String gcmId, String email)
+			String lastname, Date dateOfBirth, String gcmId, String email, Date dateOfAppointment, Long doctorId)
 			throws PracticePlaceException;
 
 	List<SymptomDTO> listSymptoms(long sessionId);
