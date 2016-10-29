@@ -30,7 +30,7 @@ public class Patient extends BaseEntity{
 		this.dateOfBirth = dateOfBirth;
 		this.gcmId = gcmId;
 		this.email = email;
-		this.setAppointmentDate(appointmentDate);
+		this.appointmentDate = appointmentDate;
 	}
 	
 	

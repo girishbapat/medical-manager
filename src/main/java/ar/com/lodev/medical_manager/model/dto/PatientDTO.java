@@ -8,6 +8,7 @@ public class PatientDTO extends BaseEntityDTO{
 	private String lastname;
 	private Long dateOfBirth;
 	private String email;
+	private Long appointmentDate;
 	
 	public PatientDTO(Patient patient){
 		super(patient);
@@ -17,6 +18,9 @@ public class PatientDTO extends BaseEntityDTO{
 			this.dateOfBirth = patient.getDateOfBirth().getTime();
 		}
 		this.email = patient.getEmail();
+		if(patient.getAppointmentDate() != null){
+			this.appointmentDate = patient.getAppointmentDate().getTime();
+		}
 	}
 	
 	
@@ -29,6 +33,18 @@ public class PatientDTO extends BaseEntityDTO{
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+
+
+	public Long getAppointmentDate() {
+		return appointmentDate;
+	}
+
+
+
+	public void setAppointmentDate(Long appointmentDate) {
+		this.appointmentDate = appointmentDate;
 	}
 
 
