@@ -342,6 +342,12 @@ function buildSessionTable(){
 		        	   return new Date(data.patient.dateOfBirth).toString('MMMM d, yyyy');
 		           }
 		        },
+		        {
+			           "mData": null,
+			           "mRender": function(data, type, full) {
+			        	   return data.patient.email;
+			           }
+			        },
 				{
 		           "mData": null,
 		           "mRender": function(data, type, full) {
