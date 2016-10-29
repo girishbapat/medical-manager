@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.com.lodev.medical_manager.component.dao.DoctorPracticePlaceRepository;
+import ar.com.lodev.medical_manager.component.dao.MedicalSessionRepository;
 import ar.com.lodev.medical_manager.component.dao.PracticePlaceRepository;
 import ar.com.lodev.medical_manager.component.service.DoctorService;
 import ar.com.lodev.medical_manager.component.service.PracticePlaceAssociationService;
@@ -17,6 +18,7 @@ import ar.com.lodev.medical_manager.exception.DoctorPlaceAssociationException;
 import ar.com.lodev.medical_manager.exception.PracticePlaceException;
 import ar.com.lodev.medical_manager.model.Doctor;
 import ar.com.lodev.medical_manager.model.DoctorPracticePlaceAssociation;
+import ar.com.lodev.medical_manager.model.MedicalSession;
 import ar.com.lodev.medical_manager.model.PracticePlace;
 import ar.com.lodev.medical_manager.model.PracticePlaceDoctorRequestStatus;
 import ar.com.lodev.medical_manager.model.User;
@@ -32,6 +34,8 @@ public class PracticePlaceAssociationServiceImpl extends BaseService implements 
 	private DoctorService doctorService;
 	@Autowired
 	private PracticePlaceRepository practicePlaceRepository;
+	@Autowired
+	private MedicalSessionRepository medicalSessionRepository;
 	
 	@Override
 	@Transactional
@@ -90,6 +94,13 @@ public class PracticePlaceAssociationServiceImpl extends BaseService implements 
 		DoctorPracticePlaceAssociation association = doctorPlaceRepository.findOne(associationId);
 		if(!association.getPracticePlace().equals(practicePlace)){
 			throw new DoctorPlaceAssociationException("the association is not from the practicePlace in session");
+		}
+		if(status.equals(PracticePlaceDoctorRequestStatus.DENIED)){
+			List<MedicalSession> sessions = medicalSessionRepository.listDoctorForPracticePlaceFromMedicalSessions(association.getDoctor().getId(), practicePlace.getId());
+			for (MedicalSession medicalSession : sessions) {
+				medicalSession.setDoctor(null);
+				medicalSession.setAvailableToBeTaken(true);
+			}
 		}
 		association.setStatus(status);
 		return new DoctorPracticePlaceAssociationDTO(association);

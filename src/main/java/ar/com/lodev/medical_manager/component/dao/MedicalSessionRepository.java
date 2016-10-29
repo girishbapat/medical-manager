@@ -21,4 +21,7 @@ public interface MedicalSessionRepository extends CrudRepository<MedicalSession,
 	
 	@Query("SELECT m FROM MedicalSession m WHERE m.open = 1")
 	List<MedicalSession> findOpeningSessions();
+	
+	@Query("SELECT m FROM MedicalSession m WHERE m.doctor.id=:doctorId and m.practicePlace.id=:practicePlaceId")
+	List<MedicalSession> listDoctorForPracticePlaceFromMedicalSessions(@Param("doctorId")long doctorId, @Param("practicePlaceId")long practicePlaceId);
 }
