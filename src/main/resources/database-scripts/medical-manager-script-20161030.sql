@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS `configurations`;
+CREATE TABLE `configurations`
+(
+`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+`key` VARCHAR(255) NOT NULL,
+`value` VARCHAR(255),
+PRIMARY KEY (`id`)
+);
