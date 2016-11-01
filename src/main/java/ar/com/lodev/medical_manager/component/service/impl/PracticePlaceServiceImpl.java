@@ -166,7 +166,9 @@ public class PracticePlaceServiceImpl extends BaseService implements PracticePla
 		for (DoctorPracticePlaceAssociation a : drPracticePlaceAssociations) {
 			if(a.getStatus() == PracticePlaceDoctorRequestStatus.APPROVED){
 				DoctorDTO d = new DoctorDTO(a.getDoctor());
-				doctors.add(d);	
+				if(d.getPracticeLogged() != null){
+					doctors.add(d);	
+				}	
 			}
 		}
 		return doctors;
