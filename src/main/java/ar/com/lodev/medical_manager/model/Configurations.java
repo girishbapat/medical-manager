@@ -3,38 +3,47 @@ package ar.com.lodev.medical_manager.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+import ar.com.lodev.medical_manager.model.dto.ConfigurationsDTO;
+
 @Entity
 public class Configurations extends BaseEntity {
-	@Column(unique=true)
-	private String key;
-	private String value;
+	private String keyCol;
+	private String valueCol;
 
 	protected Configurations(){
 		
 	}
 	
-
-	public Configurations(String key, String value) {
+	
+	public Configurations(ConfigurationsDTO configuration){
 		super();
-		this.key = key;
-		this.value = value;
+		this.setId(configuration.getId());
+		this.keyCol=configuration.getKey();
+		this.valueCol=configuration.getValue();
 	}
 
 
-	public String getKey() {
-		return key;
+	public Configurations(String keyCol, String valueCol) {
+		super();
+		this.keyCol = keyCol;
+		this.valueCol = valueCol;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	@Column(unique=true,nullable = false)
+	public String getKeyCol() {
+		return keyCol;
 	}
 
-	public String getValue() {
-		return value;
+	public void setKeyCol(String keyCol) {
+		this.keyCol = keyCol;
+	}
+	@Column( nullable = true)
+	public String getValueCol() {
+		return valueCol;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setValueCol(String valueCol) {
+		this.valueCol = valueCol;
 	}
 	
 }

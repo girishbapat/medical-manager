@@ -8,6 +8,7 @@ public abstract class BaseController {
 	protected static final String PANEL_SECTION_PRACTICE_PLACES = "PRACTICE_PLACES";
 	protected static final String PANEL_SECTION_PRACTICE_PLACES_ASSOCIATED = "PRACTICE_PLACES_ASSOCIATED";
 	protected static final String PANEL_SECTION_MEDICAL_SESSIONS = "MEDICAL_SESSIONS";
+	protected static final String PANEL_SECTION_CONFIGURATIONS = "SETTINGS";
 	
 
 }
