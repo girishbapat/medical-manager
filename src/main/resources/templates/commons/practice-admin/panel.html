@@ -19,6 +19,11 @@
               <li><a th:class="${section == 'PROFILE'}? current : no-current" th:href="@{/practice-admin/edit}">
                 <span aria-hidden="true"><i class="material-icons">account_box</i></span>Profile</a>
               </li>
+              <li>
+              	<a th:class="${section == 'SETTINGS'}? current : no-current" th:href="@{/configurations}">
+                <span aria-hidden="true"><i class="material-icons">build</i></span>Configurations
+                </a>
+              </li>
             </ul>
           </div>
         </div>
