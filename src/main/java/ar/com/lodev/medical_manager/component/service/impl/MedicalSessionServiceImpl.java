@@ -19,6 +19,7 @@ import ar.com.lodev.medical_manager.component.dao.DoctorRepository;
 import ar.com.lodev.medical_manager.component.dao.MedicalSessionRepository;
 import ar.com.lodev.medical_manager.component.dao.PatientRepository;
 import ar.com.lodev.medical_manager.component.dao.PracticePlaceRepository;
+import ar.com.lodev.medical_manager.component.service.ChatMedicalSessionService;
 import ar.com.lodev.medical_manager.component.service.MedicalSessionService;
 import ar.com.lodev.medical_manager.exception.MedicalSessionException;
 import ar.com.lodev.medical_manager.exception.PracticePlaceException;
@@ -43,6 +44,8 @@ public class MedicalSessionServiceImpl extends BaseService implements MedicalSes
 	private PatientRepository patientRepository;
 	@Autowired
 	private DoctorRepository doctorRepository;
+	@Autowired
+	private ChatMedicalSessionService chatMedicalSessionService;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -82,13 +85,17 @@ public class MedicalSessionServiceImpl extends BaseService implements MedicalSes
 		Patient patient = new Patient(name, lastname, dateOfBirth,gcmId,email,dateOfAppointment);
 		patient = patientRepository.save(patient);
 		MedicalSession session = new MedicalSession(patient, practicePlace,RandomStringUtils.random(6, true, true));
+		Doctor doctor = null;
 		if(doctorId != null){
 			session.setAvailableToBeTaken(false);
-			Doctor doctor = doctorRepository.findOne(doctorId);
+			doctor = doctorRepository.findOne(doctorId);
 			session.setDoctor(doctor);
 		}
 		session = medicalSessionRepository.save(session);
-				
+		if(doctor != null){
+			chatMedicalSessionService.createChatForDoctor(doctor, session);	
+		}
+		
 		return new MedicalSessionDTO(session,true);
 	}
 	

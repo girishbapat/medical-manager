@@ -41,7 +41,7 @@ public class MedicalSessionRestController {
 	public MedicalSessionDTO create(@RequestParam String name,@RequestParam String lastname,
 			@RequestParam long dateOfBirth,@RequestParam Long practicePlaceId,
 			@RequestParam(required=false) String gcmId,@RequestParam(required=false) String email,
-			@RequestParam long dateOfAppointment, @RequestParam Long doctorId) throws Exception{
+			@RequestParam (required=false) Long dateOfAppointment, @RequestParam (required=false) Long doctorId) throws Exception{
 		try {
 			Date dateOfBirthDate = new Date(dateOfBirth);
 			Date appointmentDate = new Date(dateOfAppointment);
