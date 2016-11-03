@@ -60,7 +60,7 @@ function buildDataForClipboard(){
 	var dob = $($("td",tr)[3]).text();
 	var dateSession = $($("td",tr)[1]).text();
 	
-	$("#sessionToClipboard").append("<H2>Heading for report.<H2><br/><br/><div id='sessionRow'>"+patientName+", [DOB] "+dob+" , [Session Date] "+dateSession+"</div><br>");
+	$("#sessionToClipboard").append("<H2>Prior to consultation, the patient used the GP-Mate app to report the following:<H2><br/><div id='sessionRow'>"+patientName+", [DOB] "+dob+" , [Session Date] "+dateSession+"</div><br>");
 	
 	for(var i=0; i < $(".box-symptoms .box").length; i++){
 		var description = $(".description",$(".box-symptoms .box")[i]).val();
@@ -435,7 +435,7 @@ function buildSessionTable(){
 		           "mData": null,
 		           "width": "15%",
 		           "mRender": function(data, type, full) {
-		        	   return new Date(data.startDate).toString('MMMM d, HH:mm');
+		        	   return new Date(data.startDate).toString('MMMM d, yyyy : HH:mm');
 		           }
 		        },
 				{
