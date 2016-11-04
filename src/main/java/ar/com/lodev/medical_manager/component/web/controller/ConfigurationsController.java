@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,12 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ar.com.lodev.medical_manager.component.service.ConfigurationsService;
-import ar.com.lodev.medical_manager.exception.PracticePlaceException;
 import ar.com.lodev.medical_manager.model.Configurations;
 import ar.com.lodev.medical_manager.model.dto.ConfigurationsDTO;
-import ar.com.lodev.medical_manager.model.dto.MedicalSessionDTO;
 import ar.com.lodev.medical_manager.ui.model.DataTableData;
-import ar.com.lodev.medical_manager.ui.model.OrderDirection;
 
 @Controller
 public class ConfigurationsController extends BaseController {

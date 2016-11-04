@@ -12,6 +12,11 @@
               		<span aria-hidden="true"><i class="material-icons">face</i></span>Doctors
                 </a>
               </li>
+              <li>
+              	<a th:class="${section == 'SETTINGS'}? current : no-current"  th:href="@{/doctor-admin/list-doctors1}">
+              		<span aria-hidden="true"><i class="material-icons">build</i></span>Configurations
+                </a>
+              </li>
               <li><a th:class="${section == 'MEDICAL_SESSIONS'}? current : no-current" th:href="@{/medical-session/practicePlace/list}">
               	<span aria-hidden="true"><i class="material-icons">people</i></span>Patients
                 </a>
@@ -19,11 +24,7 @@
               <li><a th:class="${section == 'PROFILE'}? current : no-current" th:href="@{/practice-admin/edit}">
                 <span aria-hidden="true"><i class="material-icons">account_box</i></span>Profile</a>
               </li>
-              <li>
-              	<a th:class="${section == 'SETTINGS'}? current : no-current" th:href="@{/configurations}">
-                <span aria-hidden="true"><i class="material-icons">build</i></span>Configurations
-                </a>
-              </li>
+              
             </ul>
           </div>
         </div>

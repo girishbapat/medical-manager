@@ -1,19 +1,26 @@
 package ar.com.lodev.medical_manager.component.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ar.com.lodev.medical_manager.component.service.ConfigurationsService;
 import ar.com.lodev.medical_manager.component.service.PracticePlaceAssociationService;
 import ar.com.lodev.medical_manager.component.service.PracticePlaceService;
+import ar.com.lodev.medical_manager.model.Configurations;
 import ar.com.lodev.medical_manager.model.PracticePlaceDoctorRequestStatus;
+import ar.com.lodev.medical_manager.model.dto.ConfigurationsDTO;
 import ar.com.lodev.medical_manager.model.dto.DoctorPracticePlaceAssociationDTO;
 import ar.com.lodev.medical_manager.ui.model.DataTableData;
 
@@ -28,10 +35,19 @@ public class DoctorAdminController extends BaseController{
 	@Autowired
 	private PracticePlaceAssociationService practicePlaceAssociationService;
 	
+	@Autowired
+	private ConfigurationsService configurationsService;
+	
 	@RequestMapping(value="/list-doctors" , method=RequestMethod.GET)
 	public String dashboard(Model model){
 		model.addAttribute("section", PANEL_SECTION_DOCTORS);
 		return "practice-admin/list-doctors";
+	}
+	
+	@RequestMapping(value="/list-doctors1" , method=RequestMethod.GET)
+	public String dashboard1(Model model){
+		model.addAttribute("section", PANEL_SECTION_CONFIGURATIONS);
+		return "practice-admin/configurations";
 	}
 	
 	@RequestMapping(value="/json/doctor/list", method=RequestMethod.GET)
@@ -39,6 +55,42 @@ public class DoctorAdminController extends BaseController{
 		List<DoctorPracticePlaceAssociationDTO> dtos = practicePlaceService.listDoctors(start);
 		long recordsTotal = practicePlaceService.countDoctors();
 		return new DataTableData(draw,recordsTotal, recordsTotal, dtos);
+	}
+	
+	@RequestMapping(value="/json/doctor/list1", method=RequestMethod.GET)
+	public @ResponseBody DataTableData listJson1(@RequestParam int start,@RequestParam long draw){
+		List<ConfigurationsDTO> configDtoList = configurationsService.findAll();
+		return new DataTableData(draw,configDtoList.size(), configDtoList.size(), configDtoList);
+		
+	}
+	
+	@RequestMapping(value = "/configurations", method = RequestMethod.POST)
+	public @ResponseBody List<ConfigurationsDTO> setConfigurations(@RequestBody List<ConfigurationsDTO> configurationsDTOs) {
+		List<Configurations> configurations=new ArrayList<Configurations>();
+		if(CollectionUtils.isNotEmpty(configurationsDTOs)){
+			for(ConfigurationsDTO configDTO:configurationsDTOs){
+				Configurations config=new Configurations(configDTO);
+				configurations.add(config);
+			}
+			configurationsService.update(configurations);
+		}
+		return configurationsService.findAll();
+	}
+	
+	@RequestMapping(value = "/configurations1", method = RequestMethod.POST)
+	public @ResponseBody List<ConfigurationsDTO> setConfigurations1(@RequestParam String key,@RequestParam String value) {
+		List<ConfigurationsDTO> configurationsDTOs = new ArrayList<ConfigurationsDTO>();
+		ConfigurationsDTO confDTO = new ConfigurationsDTO();
+		configurationsDTOs.add(confDTO);
+		List<Configurations> configurations=new ArrayList<Configurations>();
+		if(CollectionUtils.isNotEmpty(configurationsDTOs)){
+			for(ConfigurationsDTO configDTO:configurationsDTOs){
+				Configurations config=new Configurations(configDTO);
+				configurations.add(config);
+			}
+			configurationsService.update(configurations);
+		}
+		return configurationsService.findAll();
 	}
 	
 	@RequestMapping(value="/json/request/updateStatus", method=RequestMethod.POST)
