@@ -21,8 +21,8 @@ import ar.com.lodev.medical_manager.model.User;
 import ar.com.lodev.medical_manager.model.dto.ChatMedicalSessionDTO;
 
 @Service
-public class ChatMedicalSessionServiceImpl extends BaseService implements ChatMedicalSessionService{
-	
+public class ChatMedicalSessionServiceImpl extends BaseService implements ChatMedicalSessionService {
+
 	@Autowired
 	private ChatMedicalSessionRepository chatMedicalSessionRepository;
 	@Autowired
@@ -35,82 +35,92 @@ public class ChatMedicalSessionServiceImpl extends BaseService implements ChatMe
 	private PracticePlaceRepository practicePlaceRepository;
 	@Autowired
 	private NotificationService notificationService;
-	
+
 	@Override
 	@Transactional
-	public void createChatForDoctor(Doctor doctor,MedicalSession session){
-		ChatMedicalSession chatSession = new ChatMedicalSession(doctor, session);
-		chatMedicalSessionRepository.save(chatSession);
+	public void createChatForDoctor(Doctor doctor, MedicalSession session) {
+		ChatMedicalSession chatSession = chatMedicalSessionRepository.findByDoctorIdAndSessionId(doctor.getId(),
+				session.getId());
+		if (chatSession == null) {
+			chatSession = new ChatMedicalSession(doctor, session);
+			chatMedicalSessionRepository.save(chatSession);
+		}
 	}
-	
+
 	@Override
 	@Transactional
-	public void createChatForPractice(MedicalSession session){
+	public void createChatForPractice(MedicalSession session) {
 		ChatMedicalSession chatSession = new ChatMedicalSession(session.getPracticePlace(), session);
 		chatMedicalSessionRepository.save(chatSession);
 	}
-	
+
 	@Override
-	@Transactional(readOnly=true)
-	public ChatMedicalSessionDTO findChatFromDoctor(long sessionId){
+	@Transactional(readOnly = true)
+	public ChatMedicalSessionDTO findChatFromDoctor(long sessionId) {
 		Doctor doctor = doctorService.getEntityFromSession();
 		MedicalSession session = sessionRepository.findOne(sessionId);
-		if(!session.getDoctor().equals(doctor)){
+		if (!session.getDoctor().equals(doctor)) {
 			throw new SecurityException("you can't access to this chat");
 		}
-		ChatMedicalSession chatSession = chatMedicalSessionRepository.findByDoctorIdAndSessionId(doctor.getId(), session.getId());
+		ChatMedicalSession chatSession = chatMedicalSessionRepository.findByDoctorIdAndSessionId(doctor.getId(),
+				session.getId());
+		if (chatSession == null) {
+			chatSession = new ChatMedicalSession(doctor, session);
+			chatMedicalSessionRepository.save(chatSession);
+		}
 		return new ChatMedicalSessionDTO(chatSession);
 	}
-	
+
 	@Override
 	@Transactional
-	public ChatMedicalSessionDTO findChatFromPractice(long sessionId){
+	public ChatMedicalSessionDTO findChatFromPractice(long sessionId) {
 		User admin = getUserLogged();
 		PracticePlace practicePlace = practicePlaceRepository.findByAdminId(admin.getId());
 		MedicalSession session = sessionRepository.findOne(sessionId);
-		if(!session.getPracticePlace().equals(practicePlace)){
+		if (!session.getPracticePlace().equals(practicePlace)) {
 			throw new SecurityException("you can't access to this chat");
 		}
 		ChatMedicalSession chatSession = chatMedicalSessionRepository
 				.findByPracticePlaceIdAndSessionId(practicePlace.getId(), session.getId());
-		if(chatSession == null){
+		if (chatSession == null) {
 			chatSession = new ChatMedicalSession(practicePlace, session);
 			chatSession = chatMedicalSessionRepository.save(chatSession);
 		}
 		return new ChatMedicalSessionDTO(chatSession);
 	}
-	
+
 	@Override
 	@Transactional
-	public void createMessageFromDoctor(long chatSessionId,String message){
+	public void createMessageFromDoctor(long chatSessionId, String message) {
 		Doctor doctor = doctorService.getEntityFromSession();
 		ChatMedicalSession chatSession = chatMedicalSessionRepository.findOne(chatSessionId);
-		if(!chatSession.getDoctor().equals(doctor)){
+		if (!chatSession.getDoctor().equals(doctor)) {
 			throw new SecurityException("you can't access to this chat");
 		}
 		ChatMedicalSessionMessage chatMessage = new ChatMedicalSessionMessage(chatSession, message, true);
 		chatMessageRepository.save(chatMessage);
 		Patient patient = chatSession.getSession().getPatient();
-		if(patient.getGcmId()!=null && !patient.getGcmId().isEmpty()){
+		if (patient.getGcmId() != null && !patient.getGcmId().isEmpty()) {
 			notificationService.notifyNewMessage(doctor, patient.getGcmId(), message, chatMessage.getDateCreated());
 		}
 	}
-	
+
 	@Override
 	@Transactional
-	public void createMessageFromPractice(long chatSessionId,String message){
+	public void createMessageFromPractice(long chatSessionId, String message) {
 		User admin = getUserLogged();
 		PracticePlace practicePlace = practicePlaceRepository.findByAdminId(admin.getId());
 		ChatMedicalSession chatSession = chatMedicalSessionRepository.findOne(chatSessionId);
-		if(!chatSession.getPracticePlace().equals(practicePlace)){
+		if (!chatSession.getPracticePlace().equals(practicePlace)) {
 			throw new SecurityException("you can't access to this chat");
 		}
 		ChatMedicalSessionMessage chatMessage = new ChatMedicalSessionMessage(chatSession, message, true);
 		chatMessageRepository.save(chatMessage);
-		
+
 		Patient patient = chatSession.getSession().getPatient();
-		if(patient.getGcmId()!=null && !patient.getGcmId().isEmpty()){
-			notificationService.notifyNewMessage(practicePlace, patient.getGcmId(), message, chatMessage.getDateCreated());
+		if (patient.getGcmId() != null && !patient.getGcmId().isEmpty()) {
+			notificationService.notifyNewMessage(practicePlace, patient.getGcmId(), message,
+					chatMessage.getDateCreated());
 		}
 	}
 }

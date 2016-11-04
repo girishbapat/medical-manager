@@ -16,15 +16,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import ar.com.lodev.medical_manager.TopicSubscriptionInterceptor;
 import ar.com.lodev.medical_manager.component.service.MedicalSessionService;
 import ar.com.lodev.medical_manager.exception.MedicalSessionException;
 import ar.com.lodev.medical_manager.exception.PracticePlaceException;
 import ar.com.lodev.medical_manager.model.dto.MedicalSessionDTO;
 import ar.com.lodev.medical_manager.model.dto.SymptomDTO;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 @RestController
 @RequestMapping(value="/api/1.0/medical-session")
@@ -43,8 +43,12 @@ public class MedicalSessionRestController {
 			@RequestParam(required=false) String gcmId,@RequestParam(required=false) String email,
 			@RequestParam (required=false) Long dateOfAppointment, @RequestParam (required=false) Long doctorId) throws Exception{
 		try {
+			Date appointmentDate = null;
 			Date dateOfBirthDate = new Date(dateOfBirth);
-			Date appointmentDate = new Date(dateOfAppointment);
+			if(dateOfAppointment != null){
+				appointmentDate = new Date(dateOfAppointment);	
+			}
+			
 			MedicalSessionDTO dto = medicalSessionService.createSession(practicePlaceId, name, 
 					lastname, dateOfBirthDate,gcmId,email,appointmentDate,doctorId);
 			

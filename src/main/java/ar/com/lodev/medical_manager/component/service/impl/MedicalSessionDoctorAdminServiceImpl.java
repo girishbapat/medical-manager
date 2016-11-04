@@ -30,8 +30,8 @@ import ar.com.lodev.medical_manager.model.dto.SymptomDTO;
 import ar.com.lodev.medical_manager.ui.model.OrderDirection;
 
 @Service
-public class MedicalSessionDoctorAdminServiceImpl extends BaseService implements MedicalSessionDoctorAdminService{
-	
+public class MedicalSessionDoctorAdminServiceImpl extends BaseService implements MedicalSessionDoctorAdminService {
+
 	@Autowired
 	private MedicalSessionRepository medicalSessionRepository;
 	@Autowired
@@ -40,122 +40,118 @@ public class MedicalSessionDoctorAdminServiceImpl extends BaseService implements
 	private ChatMedicalSessionService chatMedicalSessionService;
 	@Autowired
 	private NotificationService notificationService;
-	
+
 	@Override
-	public boolean hasAccessToSession(long sessionId){
+	public boolean hasAccessToSession(long sessionId) {
 		Doctor doctor = doctorService.getEntityFromSession();
 		MedicalSession session = medicalSessionRepository.findOne(sessionId);
 		return session.getDoctor().equals(doctor);
 	}
-	
+
 	@Override
-	@Transactional(rollbackFor={Exception.class})
-	public void allocate(long sessionId) throws MedicalSessionException, PracticePlaceLoggedException{
+	@Transactional(rollbackFor = { Exception.class })
+	public void allocate(long sessionId) throws MedicalSessionException, PracticePlaceLoggedException {
 		Doctor doctor = doctorService.getEntityFromSession();
 		MedicalSession session = medicalSessionRepository.findOne(sessionId);
 		DoctorPracticePlaceAssociation association = doctor.getPracticeLogged();
-		if(!session.getPracticePlace().equals(association.getPracticePlace())){
+		if (!session.getPracticePlace().equals(association.getPracticePlace())) {
 			throw new PracticePlaceLoggedException("You need to be logged into the practice place");
 		}
-		if(!session.isAvailableToBeTaken()){
+		if (!session.isAvailableToBeTaken()) {
 			throw new MedicalSessionException("The session has already been taked.");
 		}
 		session.setAvailableToBeTaken(false);
 		session.setDoctor(doctor);
-		
+
 		chatMedicalSessionService.createChatForDoctor(doctor, session);
-		
+
 		Patient patient = session.getPatient();
-		if(patient.getGcmId()!=null && !patient.getGcmId().isEmpty()){
+		if (patient.getGcmId() != null && !patient.getGcmId().isEmpty()) {
 			notificationService.notifyDoctorAllocate(doctor, patient.getGcmId());
 		}
 	}
-	
+
 	@Override
-	@Transactional(rollbackFor={Exception.class})
-	public void deallocate(long sessionId) throws MedicalSessionException, PracticePlaceLoggedException{
+	@Transactional(rollbackFor = { Exception.class })
+	public void deallocate(long sessionId) throws MedicalSessionException, PracticePlaceLoggedException {
 		Doctor doctor = doctorService.getEntityFromSession();
 		MedicalSession session = medicalSessionRepository.findOne(sessionId);
 		DoctorPracticePlaceAssociation association = doctor.getPracticeLogged();
-		if(!session.getPracticePlace().equals(association.getPracticePlace())){
+		if (!session.getPracticePlace().equals(association.getPracticePlace())) {
 			throw new PracticePlaceLoggedException("You need to be logged into the practice place");
 		}
-		if(!session.isAvailableToBeTaken()){
+		if (!session.isAvailableToBeTaken()) {
 			session.setAvailableToBeTaken(true);
 			session.setDoctor(null);
 		}
-		
-		
-		chatMedicalSessionService.createChatForDoctor(doctor, session);
-		
+
 		Patient patient = session.getPatient();
-		if(patient.getGcmId()!=null && !patient.getGcmId().isEmpty()){
+		if (patient.getGcmId() != null && !patient.getGcmId().isEmpty()) {
 			notificationService.notifyDoctorDeAllocate(doctor, patient.getGcmId());
 		}
 	}
-	
+
 	@Override
-	@Transactional(readOnly=true)
-	public MedicalSessionDTO find(long sessionId) throws PracticePlaceLoggedException{
+	@Transactional(readOnly = true)
+	public MedicalSessionDTO find(long sessionId) throws PracticePlaceLoggedException {
 		Doctor doctor = doctorService.getEntityFromSession();
 		MedicalSession session = medicalSessionRepository.findOne(sessionId);
 		DoctorPracticePlaceAssociation association = doctor.getPracticeLogged();
-		if(!session.getPracticePlace().equals(association.getPracticePlace())){
+		if (!session.getPracticePlace().equals(association.getPracticePlace())) {
 			throw new PracticePlaceLoggedException("You need to be logged into the practice place");
 		}
 		return new MedicalSessionDTO(session, false, false, doctor);
 	}
-	
+
 	@Override
-	@Transactional(readOnly=true)
-	public List<MedicalSessionDTO> search(String name,int offset,OrderDirection orderDirection,
-			String columnToOrder) throws PracticePlaceException{
+	@Transactional(readOnly = true)
+	public List<MedicalSessionDTO> search(String name, int offset, OrderDirection orderDirection, String columnToOrder)
+			throws PracticePlaceException {
 		Doctor doctor = doctorService.getEntityFromSession();
 		DoctorPracticePlaceAssociation association = doctor.getPracticeLogged();
-		if(association == null){
+		if (association == null) {
 			throw new PracticePlaceException("You need to be logged into a practice place");
 		}
 		PageRequest pageRequest = null;
-		if(columnToOrder == null || orderDirection == null){
-			//ORDER BY m.open DESC, m.availableToBeTaken DESC
-			pageRequest = new PageRequest(offset/limit, limit,new Sort(
-					new Order(Direction.DESC, "open"), 
-				    new Order(Direction.DESC, "availableToBeTaken")));
-			
-		}else{
-			pageRequest = new PageRequest(offset/limit, limit,new Sort(
-					new Order(Direction.valueOf(orderDirection.toString()), columnToOrder)));
+		if (columnToOrder == null || orderDirection == null) {
+			// ORDER BY m.open DESC, m.availableToBeTaken DESC
+			pageRequest = new PageRequest(offset / limit, limit,
+					new Sort(new Order(Direction.DESC, "open"), new Order(Direction.DESC, "availableToBeTaken")));
+
+		} else {
+			pageRequest = new PageRequest(offset / limit, limit,
+					new Sort(new Order(Direction.valueOf(orderDirection.toString()), columnToOrder)));
 		}
 		Page<MedicalSession> page = medicalSessionRepository
-				.listSessionsFromPracticePlace(association.getPracticePlace().getId(),name,pageRequest);
-		
-		List<MedicalSessionDTO> dtos = new ArrayList<MedicalSessionDTO>(); 
-		for(MedicalSession session : page.getContent()){
-			dtos.add(new MedicalSessionDTO(session, false, false,doctor));
+				.listSessionsFromPracticePlace(association.getPracticePlace().getId(), name, pageRequest);
+
+		List<MedicalSessionDTO> dtos = new ArrayList<MedicalSessionDTO>();
+		for (MedicalSession session : page.getContent()) {
+			dtos.add(new MedicalSessionDTO(session, false, false, doctor));
 		}
 		return dtos;
 	}
-	
+
 	@Override
-	@Transactional(readOnly=true)
-	public long countSearchForDoctor(String name){
+	@Transactional(readOnly = true)
+	public long countSearchForDoctor(String name) {
 		Doctor doctor = doctorService.getEntityFromSession();
 		DoctorPracticePlaceAssociation association = doctor.getPracticeLogged();
-		long number = medicalSessionRepository
-				.countSessionsFromPracticePlace(association.getPracticePlace().getId(),name);
+		long number = medicalSessionRepository.countSessionsFromPracticePlace(association.getPracticePlace().getId(),
+				name);
 		return number;
 	}
-	
+
 	@Override
-	@Transactional(readOnly=true)
-	public List<SymptomDTO> listSymptoms(long sessionId) throws PracticePlaceException{
+	@Transactional(readOnly = true)
+	public List<SymptomDTO> listSymptoms(long sessionId) throws PracticePlaceException {
 		Doctor doctor = doctorService.getEntityFromSession();
 		MedicalSession session = medicalSessionRepository.findOne(sessionId);
-		if(!doctor.getPracticeLogged().getPracticePlace().equals(session.getPracticePlace())){
+		if (!doctor.getPracticeLogged().getPracticePlace().equals(session.getPracticePlace())) {
 			throw new PracticePlaceException("You need to be logged into the practice place");
 		}
 		List<SymptomDTO> symptomDTOs = new ArrayList<>();
-		for(Symptom symp : session.getSymptoms()){
+		for (Symptom symp : session.getSymptoms()) {
 			symptomDTOs.add(new SymptomDTO(symp));
 		}
 		return symptomDTOs;
