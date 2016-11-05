@@ -436,7 +436,7 @@ function buildSessionTable(){
 		           "mData": null,
 		           "width": "15%",
 		           "mRender": function(data, type, full) {
-		        	   return new Date(data.startDate).toString('MMMM d, yyyy : HH:mm');
+		        	   return new Date(data.startDate).toString('MM-d-yyyy : HH:mm');
 		           }
 		        },
 				{
@@ -449,7 +449,7 @@ function buildSessionTable(){
 		           "mData": null,
 		           "width": "15%",
 		           "mRender": function(data, type, full) {
-		        	   return new Date(data.patient.dateOfBirth).toString('MMMM d, yyyy');
+		        	   return new Date(data.patient.dateOfBirth).toString('MM-d-yyyy');
 		           }
 		        },
 		        {
@@ -471,7 +471,7 @@ function buildSessionTable(){
 			    {
 			           "mData": null,
 			           "mRender": function(data, type, full) {
-			        	   return new Date(data.patient.appointmentDate).toString('MMMM d, yyyy : HH:mm');
+			        	   return new Date(data.patient.appointmentDate).toString('MM-d-yyyy : HH:mm');
 			           }
 			        }
 			]

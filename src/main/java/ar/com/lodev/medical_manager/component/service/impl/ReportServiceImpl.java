@@ -14,6 +14,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -48,7 +49,7 @@ public class ReportServiceImpl implements ReportService {
 	private MedicalSessionRepository medicalSessionRepository;
 	
 	@Override
-	public void buildBriefConsultReport(long sessionId,BriefConsultReport reportData) throws JRException, IOException{
+	public void buildBriefConsultReport(long sessionId,BriefConsultReport reportData, String files) throws JRException, IOException{
 		if(!medicalSessionDoctorService.hasAccessToSession(sessionId)){
 			throw new SecurityException("User unauthorized");
 		}
@@ -67,9 +68,23 @@ public class ReportServiceImpl implements ReportService {
 		JasperPrint print = JasperFillManager.fillReport(report,new HashMap<String, Object>(), ds);
 		JasperExportManager.exportReportToPdfFile(print, REPORT_EXPORT_PATH+fileName);
 		emailService.enviarEmail(session.getPatient().getEmail(), 
-				REPORT_SUBJECT, REPORT_DEFAULT_BODY, REPORT_EXPORT_PATH+fileName);
+				REPORT_SUBJECT, REPORT_DEFAULT_BODY, REPORT_EXPORT_PATH+fileName,files,REPORT_EXPORT_PATH);
 		
 		File reportGenerated = new File(REPORT_EXPORT_PATH+fileName);
 		reportGenerated.delete();
+		File directory = new File(REPORT_EXPORT_PATH);
+
+		// Get all files in directory
+
+		File[] allFiles = directory.listFiles();
+		for (File file : allFiles)
+		{
+		   file.delete();
+		   if (!file.delete())
+		   {
+		       System.out.println("Failed to delete "+file);
+		   }
+		} 
+ 
 	}
 }

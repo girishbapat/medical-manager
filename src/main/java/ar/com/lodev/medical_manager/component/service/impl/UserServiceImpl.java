@@ -39,7 +39,7 @@ public class UserServiceImpl extends BaseService implements UserService{
         String password = RandomStringUtils.random(6, true, true);
         user.setPassword(bCryptPasswordEncoder.encode(password));
 		emailService.enviarEmail(user.getEmail(), "ConsultPal - password changed"
-				, "You have requested a new password. Your new password is: "+password, null);
+				, "You have requested a new password. Your new password is: "+password, null,null,null);
 	}
 	
 	@Override
@@ -50,7 +50,7 @@ public class UserServiceImpl extends BaseService implements UserService{
 			throw new UserException("User with email: "+email+" does not exist");
 		}
 		emailService.enviarEmail(user.getEmail(), "ConsultPal - username requested"
-				, "You have requested your username. Your username is: "+user.getUsername(), null);
+				, "You have requested your username. Your username is: "+user.getUsername(), null,null,null);
 	}
 	
 	

@@ -8,7 +8,7 @@ import ar.com.lodev.medical_manager.model.report.dto.BriefConsultReport;
 
 public interface ReportService {
 
-	void buildBriefConsultReport(long sessionId, BriefConsultReport reportData)
+	void buildBriefConsultReport(long sessionId, BriefConsultReport reportData, String files)
 			throws JRException, IOException;
 
 

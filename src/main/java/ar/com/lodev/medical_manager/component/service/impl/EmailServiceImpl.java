@@ -25,7 +25,7 @@ public class EmailServiceImpl implements EmailService{
     private String fromEmail;
 	
     @Override
-    public void enviarEmail(String email, String asunto, String cuerpoMensaje,String filePath){
+    public void enviarEmail(String email, String asunto, String cuerpoMensaje,String filePath, String files,String file_path){
     	try {
     		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
     		MimeMessageHelper mailMsg = new MimeMessageHelper(mimeMessage, true);
@@ -36,9 +36,17 @@ public class EmailServiceImpl implements EmailService{
 			
 	        mailMsg.setText(cuerpoMensaje, false /* isHtml */);
 			
+	        FileSystemResource file = null;
 			if(filePath != null){
-				FileSystemResource file = new FileSystemResource(filePath);
+				file = new FileSystemResource(filePath);
 				mailMsg.addAttachment(file.getFilename(), file);
+			}
+			
+			if(files != null && files.length()>0){
+				for(String singleFile : files.split(",")){
+					file = new FileSystemResource(file_path+"/"+singleFile);
+					mailMsg.addAttachment(file.getFilename(), file);
+				}
 			}
 			
 			javaMailSender.send(mimeMessage);

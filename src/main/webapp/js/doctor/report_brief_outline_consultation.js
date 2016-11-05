@@ -74,7 +74,8 @@ $("#modal_report .modal-footer .btn-primary").on("click",function(){
 function sendReport(){
 	var briefConsultReport = new BriefConsultReport();
 	briefConsultReport.buildReportData();
-	var data = {'sessionId':sessionIdReport,'report':JSON.stringify(briefConsultReport)};
+	var files = $('#result').text();
+	var data = {'sessionId':sessionIdReport,'report':JSON.stringify(briefConsultReport),'files':files};
 	$.ajax({
 		url: contextPath+"report/brief-outline-consultation/build",
 		method: "POST",
@@ -130,4 +131,55 @@ BriefConsultReport.prototype.buildReportData = function(){
 		var action = new BriefConsultAction(actionName,additionalComment,discussed);
 		this.actions.push(action);
 	}
+}
+
+
+$('.trigger-file-input').click(function () {
+    $('#file').click();
+});
+$("input:file").change(function () {
+    
+    var files = document.getElementById('file').files;
+    var formData = new FormData();
+    for (var i = 0; i < files.length; i++) {
+        formData.append("file" + i, files[i]);
+    }
+    $.ajax({
+        url: contextPath+"report/upload-ajax",  //Server script to process data ../report/upload-ajax
+        type: 'POST',
+        xhr: function () {  // Custom XMLHttpRequest
+            var myXhr = $.ajaxSettings.xhr();
+            if (myXhr.upload) {
+                myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+            }
+            return myXhr;
+        },
+        //Ajax events
+        beforeSend: beforeSendHandler,
+
+        error: errorHandler,
+        // Form data
+        data: formData,
+        //Options to tell jQuery not to process data or worry about content-type.
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (e) {
+            $("#result").html(e);
+        }
+
+    });
+});
+
+function beforeSendHandler() {
+}
+
+function errorHandler(e) {
+    alert("An error occurred");
+}
+
+function progressHandlingFunction(e) {
+    if (e.lengthComputable) {
+        $('progress').attr({value: e.loaded, max: e.total});
+    }
 }
