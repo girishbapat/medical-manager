@@ -37,11 +37,11 @@ function updateConfiguration(key,value){
 		var data = {'key':key, 'value':newValue};
 
 		$.ajax({
-			url: "/doctor-admin/configurations1",
+			url: "../doctor-admin/configurations1",
 			method: "POST",
 			data: data,
 			success: function( data, textStatus, jqXHR) {
-				swal("Configuration Update!","Configuration Update Successfuly.", "success");
+				swal("Configuration Updated!","Configuration Update Successfuly.", "success");
 			},
 			error: function ( jqXHR, textStatus, errorThrown){
 				swal("Error!",jqXHR.responseText, "error");

@@ -25,82 +25,87 @@ import ar.com.lodev.medical_manager.model.dto.DoctorPracticePlaceAssociationDTO;
 import ar.com.lodev.medical_manager.ui.model.DataTableData;
 
 @Controller
-@RequestMapping(value="/doctor-admin")
-public class DoctorAdminController extends BaseController{
-	
+@RequestMapping(value = "/doctor-admin")
+public class DoctorAdminController extends BaseController {
+
 	static final Logger logger = Logger.getLogger(DoctorAdminController.class);
-	
+
 	@Autowired
 	private PracticePlaceService practicePlaceService;
 	@Autowired
 	private PracticePlaceAssociationService practicePlaceAssociationService;
-	
+
 	@Autowired
 	private ConfigurationsService configurationsService;
-	
-	@RequestMapping(value="/list-doctors" , method=RequestMethod.GET)
-	public String dashboard(Model model){
+
+	@RequestMapping(value = "/list-doctors", method = RequestMethod.GET)
+	public String dashboard(Model model) {
 		model.addAttribute("section", PANEL_SECTION_DOCTORS);
 		return "practice-admin/list-doctors";
 	}
-	
-	@RequestMapping(value="/list-doctors1" , method=RequestMethod.GET)
-	public String dashboard1(Model model){
+
+	@RequestMapping(value = "/list-doctors1", method = RequestMethod.GET)
+	public String dashboard1(Model model) {
 		model.addAttribute("section", PANEL_SECTION_CONFIGURATIONS);
 		return "practice-admin/configurations";
 	}
-	
-	@RequestMapping(value="/json/doctor/list", method=RequestMethod.GET)
-	public @ResponseBody DataTableData listJson(@RequestParam int start,@RequestParam long draw){
-		List<DoctorPracticePlaceAssociationDTO> dtos = practicePlaceService.listDoctors(start);
+
+	@RequestMapping(value = "/json/doctor/list", method = RequestMethod.GET)
+	public @ResponseBody
+	DataTableData listJson(@RequestParam int start, @RequestParam long draw) {
+		List<DoctorPracticePlaceAssociationDTO> dtos = practicePlaceService
+				.listDoctors(start);
 		long recordsTotal = practicePlaceService.countDoctors();
-		return new DataTableData(draw,recordsTotal, recordsTotal, dtos);
+		return new DataTableData(draw, recordsTotal, recordsTotal, dtos);
 	}
-	
-	@RequestMapping(value="/json/doctor/list1", method=RequestMethod.GET)
-	public @ResponseBody DataTableData listJson1(@RequestParam int start,@RequestParam long draw){
+
+	@RequestMapping(value = "/json/doctor/list1", method = RequestMethod.GET)
+	public @ResponseBody
+	DataTableData listJson1(@RequestParam int start, @RequestParam long draw) {
 		List<ConfigurationsDTO> configDtoList = configurationsService.findAll();
-		return new DataTableData(draw,configDtoList.size(), configDtoList.size(), configDtoList);
-		
+		return new DataTableData(draw, configDtoList.size(),
+				configDtoList.size(), configDtoList);
+
 	}
-	
-	@RequestMapping(value = "/configurations", method = RequestMethod.POST)
-	public @ResponseBody List<ConfigurationsDTO> setConfigurations(@RequestBody List<ConfigurationsDTO> configurationsDTOs) {
-		List<Configurations> configurations=new ArrayList<Configurations>();
-		if(CollectionUtils.isNotEmpty(configurationsDTOs)){
-			for(ConfigurationsDTO configDTO:configurationsDTOs){
-				Configurations config=new Configurations(configDTO);
-				configurations.add(config);
-			}
-			configurationsService.update(configurations);
-		}
-		return configurationsService.findAll();
-	}
-	
+
 	@RequestMapping(value = "/configurations1", method = RequestMethod.POST)
-	public @ResponseBody List<ConfigurationsDTO> setConfigurations1(@RequestParam String key,@RequestParam String value) {
-		List<ConfigurationsDTO> configurationsDTOs = new ArrayList<ConfigurationsDTO>();
-		ConfigurationsDTO confDTO = new ConfigurationsDTO();
-		configurationsDTOs.add(confDTO);
-		List<Configurations> configurations=new ArrayList<Configurations>();
-		if(CollectionUtils.isNotEmpty(configurationsDTOs)){
-			for(ConfigurationsDTO configDTO:configurationsDTOs){
-				Configurations config=new Configurations(configDTO);
-				configurations.add(config);
+	public @ResponseBody
+	boolean setConfigurations1(@RequestParam String key,
+			@RequestParam String value) {
+
+		List<ConfigurationsDTO> configDtoList = new ArrayList<ConfigurationsDTO>();
+		if (StringUtils.isNotEmpty(StringUtils.trim(key))) {
+			ConfigurationsDTO configDTO = configurationsService
+					.findByKey(StringUtils.trim(key));
+			if (configDTO != null) {
+				configDtoList.add(configDTO);
 			}
-			configurationsService.update(configurations);
+
+			List<Configurations> configurations = new ArrayList<Configurations>();
+			if (CollectionUtils.isNotEmpty(configDtoList)) {
+				for (ConfigurationsDTO confDto : configDtoList) {
+					Configurations config = new Configurations(confDto);
+					configurations.add(config);
+				}
+				configurationsService.update(configurations);
+				return true;
+			}
 		}
-		return configurationsService.findAll();
+		return false;
 	}
-	
-	@RequestMapping(value="/json/request/updateStatus", method=RequestMethod.POST)
-	public @ResponseBody DoctorPracticePlaceAssociationDTO updateRequestStatus(@RequestParam long associationId,
-			@RequestParam String status) throws Exception{
-		try{
-			PracticePlaceDoctorRequestStatus statusEnum = PracticePlaceDoctorRequestStatus.valueOf(status);
-			DoctorPracticePlaceAssociationDTO dto = practicePlaceAssociationService.updateRequestStatus(associationId, statusEnum);
+
+	@RequestMapping(value = "/json/request/updateStatus", method = RequestMethod.POST)
+	public @ResponseBody
+	DoctorPracticePlaceAssociationDTO updateRequestStatus(
+			@RequestParam long associationId, @RequestParam String status)
+			throws Exception {
+		try {
+			PracticePlaceDoctorRequestStatus statusEnum = PracticePlaceDoctorRequestStatus
+					.valueOf(status);
+			DoctorPracticePlaceAssociationDTO dto = practicePlaceAssociationService
+					.updateRequestStatus(associationId, statusEnum);
 			return dto;
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error(ERROR, e);
 			throw new Exception(e.getMessage());
 		}
