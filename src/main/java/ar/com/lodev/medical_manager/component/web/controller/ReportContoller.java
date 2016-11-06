@@ -76,7 +76,7 @@ public class ReportContoller {
                 BufferedOutputStream stream = new BufferedOutputStream(
                         new FileOutputStream(serverFile));
                 stream.write(bytes);
-                stream.close()
+                stream.close();
 
                 filePaths += uploadedFileName+",";
 
