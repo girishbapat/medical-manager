@@ -42,10 +42,10 @@ public class EmailServiceImpl implements EmailService{
 				mailMsg.addAttachment(file.getFilename(), file);
 			}
 			
-			if(files != null && files.length()>0){
+			if(files != null && files.trim().length()>0){
 				for(String singleFile : files.split(",")){
 					file = new FileSystemResource(file_path+"/"+singleFile);
-					mailMsg.addAttachment(file.getFilename(), file);
+					mailMsg.addAttachment(file.getFilename(), file);	
 				}
 			}
 			
