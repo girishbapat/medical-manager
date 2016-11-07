@@ -78,6 +78,7 @@ public class DoctorAdminController extends BaseController {
 			ConfigurationsDTO configDTO = configurationsService
 					.findByKey(StringUtils.trim(key));
 			if (configDTO != null) {
+				configDTO.setValue(value);
 				configDtoList.add(configDTO);
 			}
 
