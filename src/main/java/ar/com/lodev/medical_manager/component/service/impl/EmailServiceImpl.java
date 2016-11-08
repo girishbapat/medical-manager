@@ -1,5 +1,7 @@
 package ar.com.lodev.medical_manager.component.service.impl;
 
+import java.io.File;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -44,7 +46,7 @@ public class EmailServiceImpl implements EmailService{
 			
 			if(files != null && files.trim().length()>0){
 				for(String singleFile : files.split(",")){
-					file = new FileSystemResource(file_path+"/"+singleFile);
+					file = new FileSystemResource(file_path+File.separator+singleFile);
 					mailMsg.addAttachment(file.getFilename(), file);	
 				}
 			}

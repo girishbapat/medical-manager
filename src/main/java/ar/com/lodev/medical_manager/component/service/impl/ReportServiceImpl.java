@@ -2,6 +2,7 @@ package ar.com.lodev.medical_manager.component.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,13 +67,19 @@ public class ReportServiceImpl implements ReportService {
 		JasperReport report = (JasperReport) JRLoader.loadObject(reportTemplate);
 		
 		JasperPrint print = JasperFillManager.fillReport(report,new HashMap<String, Object>(), ds);
-		JasperExportManager.exportReportToPdfFile(print, REPORT_EXPORT_PATH+fileName);
+		URL resource1 = getClass().getResource("/");
+        String path = resource1.getPath();
+        File f = new File(path+"temp"); 
+        
+        // create directories
+        Boolean bool = f.mkdirs();
+		JasperExportManager.exportReportToPdfFile(print, path + "temp"+fileName);
 		emailService.enviarEmail(session.getPatient().getEmail(), 
-				REPORT_SUBJECT, REPORT_DEFAULT_BODY, REPORT_EXPORT_PATH+fileName,files,REPORT_EXPORT_PATH);
+				REPORT_SUBJECT, REPORT_DEFAULT_BODY, path + "temp"+File.separator+fileName,files,path + "temp"+File.separator);
 		
-		File reportGenerated = new File(REPORT_EXPORT_PATH+fileName);
+		File reportGenerated = new File(path + "temp"+File.separator+fileName);
 		reportGenerated.delete();
-		File directory = new File(REPORT_EXPORT_PATH);
+		File directory = new File(path+"temp");
 
 		// Get all files in directory
 
