@@ -59,7 +59,7 @@ function buildDataForClipboard(){
 	var patientName = $($("td",tr)[2]).text();
 	var dob = $($("td",tr)[3]).text();
 	var dateSession = $($("td",tr)[1]).text();
-	
+	$("#sessionToClipboard").append("<div id='sessionRow'><H2>Prior to consultation, the patient used the GP-Mate app to report the following: <H2></div><br>");
 	$("#sessionToClipboard").append("<div id='sessionRow'>"+patientName+", [DOB] "+dob+" , [Session Date] "+dateSession+"</div><br>");
 	
 	for(var i=0; i < $(".box-symptoms .box").length; i++){
@@ -71,7 +71,7 @@ function buildDataForClipboard(){
 }
 
 $("#table-panel #export").click(function(e){
-	$("#sessionToClipboard").prepend("<H2>Prior to consultation, the patient used the GP-Mate app to report the following:<H2><br/>");
+	$('#sessionToClipboard br').remove();
 	$("#sessionToClipboard").show();
 	
 });
