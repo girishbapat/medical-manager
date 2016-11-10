@@ -3,6 +3,7 @@ var patientNameReport = null;
 var dateSessionReport = null;
 $("#table-panel").on("click","#sendReport",function(e){
 	$("#modal_report textarea").val("");
+	$("#file").val("");
 	
 	var tr = $('#table_id tbody .selected');
 	
