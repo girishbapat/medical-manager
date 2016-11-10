@@ -4,7 +4,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
@@ -70,14 +69,8 @@ public class ReportContoller {
             String uploadedFileName = multipartFile.getOriginalFilename();
             try {
                 byte[] bytes = multipartFile.getBytes();
-                URL resource = getClass().getResource("/");
-                String path = resource.getPath();
-                File f = new File(path+"temp"); 
-                
-                // create directories
-                Boolean bool = f.mkdirs();
  
-                String storedFileLocation = path  + "temp"+ File.separator + uploadedFileName;
+                String storedFileLocation = REPORT_EXPORT_PATH + FILE_SEPARATOR + uploadedFileName;
                 // Create the file on server
                 File serverFile = new File(storedFileLocation);
                 BufferedOutputStream stream = new BufferedOutputStream(
