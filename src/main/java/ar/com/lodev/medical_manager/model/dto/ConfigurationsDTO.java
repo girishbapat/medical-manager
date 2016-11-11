@@ -5,6 +5,7 @@ import ar.com.lodev.medical_manager.model.Configurations;
 public class ConfigurationsDTO extends BaseEntityDTO {
 private String key;
 private String value;
+private String practiceId;
 public String getKey() {
 	return key;
 }
@@ -31,6 +32,13 @@ public ConfigurationsDTO(Configurations configuration){
 	this.setId(configuration.getId());
 	this.key=configuration.getKeyCol();
 	this.value=configuration.getValueCol();
+	this.practiceId=configuration.getPracticeId();
+}
+public String getPracticeId() {
+	return practiceId;
+}
+public void setPracticeId(String practiceId) {
+	this.practiceId = practiceId;
 }
 
 }

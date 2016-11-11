@@ -9,6 +9,7 @@ import ar.com.lodev.medical_manager.model.dto.ConfigurationsDTO;
 public class Configurations extends BaseEntity {
 	private String keyCol;
 	private String valueCol;
+	private String practiceId;
 
 	protected Configurations(){
 		
@@ -20,13 +21,15 @@ public class Configurations extends BaseEntity {
 		this.setId(configuration.getId());
 		this.keyCol=configuration.getKey();
 		this.valueCol=configuration.getValue();
+		this.practiceId=configuration.getPracticeId();
 	}
 
 
-	public Configurations(String keyCol, String valueCol) {
+	public Configurations(String keyCol, String valueCol,String practiceId) {
 		super();
 		this.keyCol = keyCol;
 		this.valueCol = valueCol;
+		this.practiceId=practiceId;
 	}
 
 	@Column(unique=true,nullable = false)
@@ -44,6 +47,16 @@ public class Configurations extends BaseEntity {
 
 	public void setValueCol(String valueCol) {
 		this.valueCol = valueCol;
+	}
+
+
+	public String getPracticeId() {
+		return practiceId;
+	}
+
+
+	public void setPracticeId(String practiceId) {
+		this.practiceId = practiceId;
 	}
 	
 }

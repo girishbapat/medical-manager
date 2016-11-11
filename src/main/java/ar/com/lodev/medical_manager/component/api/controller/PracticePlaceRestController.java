@@ -46,17 +46,19 @@ public class PracticePlaceRestController {
 		return doctors;
 	}
 
-	@RequestMapping(value = "/configurations", method = RequestMethod.GET)
-	public List<ConfigurationsDTO> getConfigurations(@RequestParam(required = false) String key) throws Exception {
+	@RequestMapping(value = "/configurations/{practiceId}", method = RequestMethod.GET)
+	public List<ConfigurationsDTO> getConfigurations(@RequestParam(required = false) String key,@PathVariable String practiceId) throws Exception {
 		List<ConfigurationsDTO> configDtoList = new ArrayList<ConfigurationsDTO>();
-		if (StringUtils.isNotEmpty(StringUtils.trim(key))) {
-			ConfigurationsDTO configDTO = configurationsService.findByKey(StringUtils.trim(key));
-			if (configDTO != null) {
-				configDtoList.add(configDTO);
+
+		configDtoList.addAll(configurationsService.findAll());
+		List<ConfigurationsDTO> configDtoListFiltered = new ArrayList<ConfigurationsDTO>();
+		for(ConfigurationsDTO c : configDtoList){
+			if(c.getPracticeId() != null && c.getPracticeId().equalsIgnoreCase(practiceId)){
+				configDtoListFiltered.add(c);
 			}
-		} else {
-			configDtoList.addAll(configurationsService.findAll());
 		}
+		configDtoList = configDtoListFiltered;
+	
 
 		return configDtoList;
 

@@ -12,15 +12,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import ar.com.lodev.medical_manager.component.dao.ConfigurationsRepository;
 import ar.com.lodev.medical_manager.component.dao.DoctorPracticePlaceRepository;
 import ar.com.lodev.medical_manager.component.dao.DoctorRepository;
 import ar.com.lodev.medical_manager.component.dao.PracticePlaceRepository;
+import ar.com.lodev.medical_manager.component.service.ConfigurationsService;
 import ar.com.lodev.medical_manager.component.service.DoctorService;
 import ar.com.lodev.medical_manager.component.service.PracticePlaceAssociationService;
 import ar.com.lodev.medical_manager.component.service.PracticePlaceService;
 import ar.com.lodev.medical_manager.component.service.UserService;
 import ar.com.lodev.medical_manager.exception.PracticePlaceException;
 import ar.com.lodev.medical_manager.exception.UserException;
+import ar.com.lodev.medical_manager.model.Configurations;
 import ar.com.lodev.medical_manager.model.Doctor;
 import ar.com.lodev.medical_manager.model.DoctorPracticePlaceAssociation;
 import ar.com.lodev.medical_manager.model.ImageEntity;
@@ -49,6 +52,11 @@ public class PracticePlaceServiceImpl extends BaseService implements PracticePla
 	private PracticePlaceAssociationService practicePlaceAssociationService;
 	@Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+	private ConfigurationsService configurationService;
+	@Autowired
+	private ConfigurationsRepository configurationRepository;
+
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -133,6 +141,16 @@ public class PracticePlaceServiceImpl extends BaseService implements PracticePla
 	public PracticePlaceDTO create(String username,String practiceId,
 			String practiceName,String password,String email) throws UserException, PracticePlaceException{
 		User user = userService.create(username, password,email, Role.PRACTICE_ADMIN);
+		 Iterable<Configurations> configurations = configurationRepository.findAll();
+		 List<Configurations> basicConfigurations = new ArrayList<Configurations>();
+		 for (Configurations configurations2 : configurations) {
+			if(configurations2.getPracticeId() == null){
+				
+				Configurations c = new Configurations(configurations2.getKeyCol(), configurations2.getValueCol(), practiceId);
+				basicConfigurations.add(c);
+			}
+		}
+		configurationService.update(basicConfigurations);
 		if(isPracticeIdUnique(practiceId)){
 			PracticePlace place = new PracticePlace(user, practiceId, "", "");
 			practicePlaceRepository.save(place);

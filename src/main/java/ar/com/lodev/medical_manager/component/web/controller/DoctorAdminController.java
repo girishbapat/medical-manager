@@ -1,6 +1,7 @@
 package ar.com.lodev.medical_manager.component.web.controller;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -22,6 +23,7 @@ import ar.com.lodev.medical_manager.model.Configurations;
 import ar.com.lodev.medical_manager.model.PracticePlaceDoctorRequestStatus;
 import ar.com.lodev.medical_manager.model.dto.ConfigurationsDTO;
 import ar.com.lodev.medical_manager.model.dto.DoctorPracticePlaceAssociationDTO;
+import ar.com.lodev.medical_manager.model.dto.PracticePlaceDTO;
 import ar.com.lodev.medical_manager.ui.model.DataTableData;
 
 @Controller
@@ -63,8 +65,17 @@ public class DoctorAdminController extends BaseController {
 	public @ResponseBody
 	DataTableData listJson1(@RequestParam int start, @RequestParam long draw) {
 		List<ConfigurationsDTO> configDtoList = configurationsService.findAll();
-		return new DataTableData(draw, configDtoList.size(),
-				configDtoList.size(), configDtoList);
+		PracticePlaceDTO dto = practicePlaceService.getFromAdmin();
+		String practiceId = dto.getPracticeId();
+		List<ConfigurationsDTO> configDtoFilterList = new ArrayList<ConfigurationsDTO>();
+		for(ConfigurationsDTO c : configDtoList){
+			if(c.getPracticeId() != null && c.getPracticeId().equalsIgnoreCase(practiceId)){
+				configDtoFilterList.add(c);
+				
+			}
+		}
+		return new DataTableData(draw, configDtoFilterList.size(),
+				configDtoFilterList.size(), configDtoFilterList);
 
 	}
 
@@ -75,12 +86,27 @@ public class DoctorAdminController extends BaseController {
 
 		List<ConfigurationsDTO> configDtoList = new ArrayList<ConfigurationsDTO>();
 		if (StringUtils.isNotEmpty(StringUtils.trim(key))) {
-			ConfigurationsDTO configDTO = configurationsService
-					.findByKey(StringUtils.trim(key));
+			/*ConfigurationsDTO configDTO = configurationsService
+					.findByKey(StringUtils.trim(key));*/
+			
+			configDtoList = configurationsService.findAll();
+			PracticePlaceDTO dto = practicePlaceService.getFromAdmin();
+			String practiceId = dto.getPracticeId();
+			List<ConfigurationsDTO> configDtoFilterList = new ArrayList<ConfigurationsDTO>();
+			for(ConfigurationsDTO c : configDtoList){
+				if(c.getPracticeId() != null && c.getPracticeId().equalsIgnoreCase(practiceId) && c.getKey().equalsIgnoreCase(key)){
+					c.setValue(value);
+					configDtoFilterList.add(c);
+					
+				}
+			}
+			configDtoList = configDtoFilterList;
+			/*ConfigurationsDTO configDTO = new ConfigurationsDTO();
+			//configDTO.setId(id);
 			if (configDTO != null) {
 				configDTO.setValue(value);
 				configDtoList.add(configDTO);
-			}
+			}*/
 
 			List<Configurations> configurations = new ArrayList<Configurations>();
 			if (CollectionUtils.isNotEmpty(configDtoList)) {
