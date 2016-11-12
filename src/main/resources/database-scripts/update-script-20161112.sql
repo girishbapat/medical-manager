@@ -1,0 +1,1 @@
+ALTER TABLE configurations ADD practice_id varchar(255)  DEFAULT NULL;
