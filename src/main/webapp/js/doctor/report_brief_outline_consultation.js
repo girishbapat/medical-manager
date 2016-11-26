@@ -76,6 +76,8 @@ function sendReport(){
 	var briefConsultReport = new BriefConsultReport();
 	briefConsultReport.buildReportData();
 	var files = $('#result').text();
+	$('#selectedFiles').html(files);
+	$('#files_attached').Text = files;
 	var data = {'sessionId':sessionIdReport,'report':JSON.stringify(briefConsultReport),'files':files};
 	$.ajax({
 		url: contextPath+"report/brief-outline-consultation/build",

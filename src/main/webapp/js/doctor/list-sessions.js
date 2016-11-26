@@ -54,6 +54,8 @@ function initializeClipboard(){
 function buildDataForClipboard(){
 	$("#sessionToClipboard #sessionRow").remove();
 	$("#sessionToClipboard .symptomsRow").remove();
+	$('#sessionToClipboard #filesSelected').remove();
+	$('#filesSelected').html("");
 	
 	var tr = $('#table_id tbody .selected');
 	var patientName = $($("td",tr)[2]).text();
@@ -72,6 +74,12 @@ function buildDataForClipboard(){
 
 $("#table-panel #export").click(function(e){
 	$('#sessionToClipboard br').remove();
+	$('#sessionToClipboard #filesSelected').remove();
+	var selectedFile = $('#selectedFiles').html();
+	if(selectedFile && selectedFile.trim().length > 0 ){
+		$("#sessionToClipboard").append("<br/><p id='filesSelected'> Files Attached:"+selectedFile+"</p>");	
+	}
+	
 	$("#sessionToClipboard").show();
 	
 });
