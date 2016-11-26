@@ -1,18 +1,28 @@
 package ar.com.lodev.medical_manager.component.service.impl;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import ar.com.lodev.medical_manager.component.dao.DoctorPracticePlaceRepository;
 import ar.com.lodev.medical_manager.component.dao.DoctorRepository;
+import ar.com.lodev.medical_manager.component.dao.MedicalSessionRepository;
+import ar.com.lodev.medical_manager.component.dao.PracticePlaceRepository;
 import ar.com.lodev.medical_manager.component.service.DoctorService;
 import ar.com.lodev.medical_manager.component.service.UserService;
 import ar.com.lodev.medical_manager.exception.UserException;
 import ar.com.lodev.medical_manager.model.Doctor;
+import ar.com.lodev.medical_manager.model.DoctorPracticePlaceAssociation;
+import ar.com.lodev.medical_manager.model.MedicalSession;
+import ar.com.lodev.medical_manager.model.PracticePlace;
+import ar.com.lodev.medical_manager.model.PracticePlaceDoctorRequestStatus;
 import ar.com.lodev.medical_manager.model.Role;
 import ar.com.lodev.medical_manager.model.User;
 import ar.com.lodev.medical_manager.model.dto.DoctorDTO;
@@ -27,6 +37,8 @@ public class DoctorServiceImpl extends BaseService implements DoctorService{
 	private DoctorRepository doctorRepository;
 	@Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+	private DoctorPracticePlaceRepository doctorPlaceRepository;	
 	
 	@Override
 	@Transactional(rollbackFor={Exception.class})
@@ -87,5 +99,19 @@ public class DoctorServiceImpl extends BaseService implements DoctorService{
 		User user = getUserLogged();
 		Doctor doctor = doctorRepository.findByUserId(user.getId());
 		return doctor;
+	}
+
+	@Override
+	public boolean hasPermissionToListDoctor(Long doctorId, Long practiceId) {
+		Page<DoctorPracticePlaceAssociation> p = doctorPlaceRepository.listByPracticePlace(practiceId,null);
+		if(p.hasContent() && p.getContent().size() > 0){ 
+			for (Iterator<DoctorPracticePlaceAssociation> iterator = p.getContent().iterator(); iterator.hasNext();) {
+				DoctorPracticePlaceAssociation o = iterator.next();
+				if(o.getDoctor().getId() == doctorId && o.getStatus() == PracticePlaceDoctorRequestStatus.APPROVED){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

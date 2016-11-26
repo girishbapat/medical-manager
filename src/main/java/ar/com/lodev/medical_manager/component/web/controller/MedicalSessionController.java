@@ -1,5 +1,6 @@
 package ar.com.lodev.medical_manager.component.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -16,12 +17,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ar.com.lodev.medical_manager.component.dao.MedicalSessionRepository;
 import ar.com.lodev.medical_manager.component.service.DoctorService;
 import ar.com.lodev.medical_manager.component.service.MedicalSessionDoctorAdminService;
 import ar.com.lodev.medical_manager.component.service.MedicalSessionService;
 import ar.com.lodev.medical_manager.exception.MedicalSessionException;
 import ar.com.lodev.medical_manager.exception.PracticePlaceException;
 import ar.com.lodev.medical_manager.exception.PracticePlaceLoggedException;
+import ar.com.lodev.medical_manager.model.MedicalSession;
 import ar.com.lodev.medical_manager.model.dto.DoctorDTO;
 import ar.com.lodev.medical_manager.model.dto.MedicalSessionDTO;
 import ar.com.lodev.medical_manager.model.dto.SymptomDTO;
@@ -51,6 +54,11 @@ public class MedicalSessionController extends BaseController{
 	@RequestMapping(value="/json/allocate" , method=RequestMethod.POST)
 	public ResponseEntity allocate(@RequestParam long sessionId){
 		try {
+			DoctorDTO doctor = doctorService.getFromSession(); 
+			boolean haspermission = doctorService.hasPermissionToListDoctor(doctor.getId(), doctor.getPracticeLogged().getId());
+			if(!haspermission){
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not Authorized.");
+			}
 			sessionDoctorAdminService.allocate(sessionId);
 			return ResponseEntity.status(HttpStatus.OK).body("");
 		} catch (PracticePlaceLoggedException e) {
@@ -65,6 +73,11 @@ public class MedicalSessionController extends BaseController{
 	@RequestMapping(value="/json/deallocate" , method=RequestMethod.POST)
 	public ResponseEntity deallocate(@RequestParam long sessionId){
 		try {
+			DoctorDTO doctor = doctorService.getFromSession(); 
+			boolean haspermission = doctorService.hasPermissionToListDoctor(doctor.getId(), doctor.getPracticeLogged().getId());
+			if(!haspermission){
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not Authorized.");
+			}
 			sessionDoctorAdminService.deallocate(sessionId);
 			return ResponseEntity.status(HttpStatus.OK).body("");
 		} catch (PracticePlaceLoggedException e) {
@@ -100,6 +113,11 @@ public class MedicalSessionController extends BaseController{
 			@RequestParam(required=false,defaultValue="",value = "search[value]") String patientName,
 			@RequestParam(required=false,value = "order[0][column]") Integer columnOrder,
 			@RequestParam(required=false,value = "order[0][dir]") String orderDirectionRaw) throws PracticePlaceException{
+		DoctorDTO doctor = doctorService.getFromSession(); 
+		boolean haspermission = doctorService.hasPermissionToListDoctor(doctor.getId(), doctor.getPracticeLogged().getId());
+		if(!haspermission){
+			return new DataTableData(draw,0, 0, new ArrayList<MedicalSessionDTO>());
+		}
 		OrderDirection orderDirection = null;
 		String columnToOrder = null;
 		if(columnOrder != null && orderDirectionRaw != null){
