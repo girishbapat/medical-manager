@@ -144,7 +144,10 @@ $("#table-panel #sendMessage").click(function(e){
 			buildSessionChat(data);
 		},
 		error: function ( jqXHR, textStatus, errorThrown){
-			//TODO : message error
+			if(jqXHR.status == 401){
+				swal("Error!", "You are not authorized.", "error");
+				return false;
+			}
 		}
 	});
 	
@@ -166,7 +169,7 @@ $(".chat-window .panel-footer #btn-chat").click(function(e){
 				$(".chat-window .panel-footer .chat_input").val("");
 			},
 			error: function ( jqXHR, textStatus, errorThrown){
-				//TODO : message error
+				swal("Error!", "You are not authorized.", "error");
 			}
 		});
 	}
@@ -218,11 +221,15 @@ $("#table-panel #allocate").click(function(e){
 				swal("Session allocated!", "The session has been allocated by you", "success");
 			},
 			error: function ( jqXHR, textStatus, errorThrown){
+				if(jqXHR.status == 401){
+					swal("Error!", "You are not authorized.", "error");
+					return false;
+				}	
 				//refresh table
 				var table = $('#table_id').DataTable();
 				table.ajax.reload( null, false );
 				
-				if(jqXHR.status == 409 || jqXHR.status == 401){
+				if(jqXHR.status == 409){
 					swal("Error!", jqXHR.responseText, "error");
 				}else{
 					swal("Error!", "The session can not be allocated. Try again later please.", "error");
@@ -246,11 +253,15 @@ $("#table-panel #deallocate").click(function(e){
 				swal("Session de-allocated!", "The session has been de-allocated by you", "success");
 			},
 			error: function ( jqXHR, textStatus, errorThrown){
+				if(jqXHR.status == 401){
+					swal("Error!", "You are not authorized.", "error");
+					return false;
+				}
 				//refresh table
 				var table = $('#table_id').DataTable();
 				table.ajax.reload( null, false );
 				
-				if(jqXHR.status == 409 || jqXHR.status == 401){
+				if(jqXHR.status == 409){
 					swal("Error!", jqXHR.responseText, "error");
 				}else{
 					swal("Error!", "The session can not be de-allocated. Try again later please.", "error");

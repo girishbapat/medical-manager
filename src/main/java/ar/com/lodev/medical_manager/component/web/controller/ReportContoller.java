@@ -60,7 +60,7 @@ public class ReportContoller {
 			if(haspermission){
 				reportService.buildBriefConsultReport(sessionId,reportObject,files);
 			}else{
-				throw new Exception("Not Authorized.");				
+				return "401";			
 			}
 		} catch (IOException e) {
 			logger.error("ERROR", e);
@@ -73,6 +73,11 @@ public class ReportContoller {
     @ResponseBody
     public String uploadMultipleFiles(MultipartHttpServletRequest request) {
       //  CommonsMultipartFile multipartFile = null;
+		DoctorDTO doctor = doctorService.getFromSession();
+		boolean haspermission = doctorService.hasPermissionToListDoctor(doctor.getId(), doctor.getPracticeLogged().getId());
+		if(!haspermission){
+			return "401";
+		}
         Iterator<String> iterator = request.getFileNames();
         String filePaths = "";
         String fileName = "";

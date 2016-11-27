@@ -84,10 +84,18 @@ function sendReport(){
 		method: "POST",
 		data: data,
 		success: function( data, textStatus, jqXHR) {
+			if(data == 401){
+				swal("Error!", "You are not authorized.", "error");
+				return false;
+			}
 			$('#modal_report').modal('hide');
 			swal("Report sent!", "The report has been sent!", "success");
 		},
 		error: function ( jqXHR, textStatus, errorThrown){
+			if(jqXHR.status == 401){
+				swal("Error!", "You are not authorized.", "error");
+				return false;
+			}
 			swal("Error!", "The report can not be sent. Try again later please.", "error");
 		}
 	});
@@ -160,7 +168,13 @@ $("input:file").change(function () {
         //Ajax events
         beforeSend: beforeSendHandler,
 
-        error: errorHandler,
+        error: function ( jqXHR, textStatus, errorThrown){
+			if(jqXHR.status == 401){
+				swal("Error!", "You are not authorized.", "error");
+				return false;
+			}
+			alert("An error occurred");
+		},
         // Form data
         data: formData,
         //Options to tell jQuery not to process data or worry about content-type.
@@ -168,6 +182,10 @@ $("input:file").change(function () {
         contentType: false,
         processData: false,
         success: function (e) {
+        	if(e == 401){
+				swal("Error!", "You are not authorized.", "error");
+				return false;
+			}
             $("#result").html(e);
         }
 
