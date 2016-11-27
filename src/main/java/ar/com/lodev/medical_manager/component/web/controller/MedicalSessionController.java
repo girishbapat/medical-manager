@@ -1,6 +1,5 @@
 package ar.com.lodev.medical_manager.component.web.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -17,14 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ar.com.lodev.medical_manager.component.dao.MedicalSessionRepository;
 import ar.com.lodev.medical_manager.component.service.DoctorService;
 import ar.com.lodev.medical_manager.component.service.MedicalSessionDoctorAdminService;
 import ar.com.lodev.medical_manager.component.service.MedicalSessionService;
 import ar.com.lodev.medical_manager.exception.MedicalSessionException;
 import ar.com.lodev.medical_manager.exception.PracticePlaceException;
 import ar.com.lodev.medical_manager.exception.PracticePlaceLoggedException;
-import ar.com.lodev.medical_manager.model.MedicalSession;
 import ar.com.lodev.medical_manager.model.dto.DoctorDTO;
 import ar.com.lodev.medical_manager.model.dto.MedicalSessionDTO;
 import ar.com.lodev.medical_manager.model.dto.SymptomDTO;
@@ -91,6 +88,11 @@ public class MedicalSessionController extends BaseController{
 	@RequestMapping(value="/doctor/list" , method=RequestMethod.GET)
 	public String dashboard(Model model,@RequestParam(required=false)String patienName){
 		DoctorDTO doctor = doctorService.getFromSession();
+		boolean haspermission = doctorService.hasPermissionToListDoctor(doctor.getId(), doctor.getPracticeLogged().getId());
+		if(!haspermission){
+			//return new DataTableData(draw,0, 0, new ArrayList<MedicalSessionDTO>());
+			return "redirect:/auth/logout";
+		}
 		model.addAttribute("doctor", doctor);
 		model.addAttribute("section", PANEL_SECTION_MEDICAL_SESSIONS);
 		if(patienName!=null){
@@ -113,11 +115,7 @@ public class MedicalSessionController extends BaseController{
 			@RequestParam(required=false,defaultValue="",value = "search[value]") String patientName,
 			@RequestParam(required=false,value = "order[0][column]") Integer columnOrder,
 			@RequestParam(required=false,value = "order[0][dir]") String orderDirectionRaw) throws PracticePlaceException{
-		DoctorDTO doctor = doctorService.getFromSession(); 
-		boolean haspermission = doctorService.hasPermissionToListDoctor(doctor.getId(), doctor.getPracticeLogged().getId());
-		if(!haspermission){
-			return new DataTableData(draw,0, 0, new ArrayList<MedicalSessionDTO>());
-		}
+		DoctorDTO doctor = doctorService.getFromSession();		
 		OrderDirection orderDirection = null;
 		String columnToOrder = null;
 		if(columnOrder != null && orderDirectionRaw != null){
