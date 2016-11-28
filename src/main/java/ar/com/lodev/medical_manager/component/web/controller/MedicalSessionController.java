@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ar.com.lodev.medical_manager.component.service.DoctorService;
 import ar.com.lodev.medical_manager.component.service.MedicalSessionDoctorAdminService;
 import ar.com.lodev.medical_manager.component.service.MedicalSessionService;
+import ar.com.lodev.medical_manager.component.service.PracticePlaceAssociationService;
 import ar.com.lodev.medical_manager.exception.MedicalSessionException;
 import ar.com.lodev.medical_manager.exception.PracticePlaceException;
 import ar.com.lodev.medical_manager.exception.PracticePlaceLoggedException;
@@ -40,6 +41,10 @@ public class MedicalSessionController extends BaseController{
 	private DoctorService doctorService;
 	@Autowired
 	private MedicalSessionService medicalSessionService;
+	
+	@Autowired
+	private PracticePlaceAssociationService practicePlaceAssociationService;
+
 	
 	@MessageMapping("/broadcast/update")
     @SendTo("/topic/medicalSession")
@@ -78,6 +83,14 @@ public class MedicalSessionController extends BaseController{
 	@RequestMapping(value="/doctor/list" , method=RequestMethod.GET)
 	public String dashboard(Model model,@RequestParam(required=false)String patienName){
 		DoctorDTO doctor = doctorService.getFromSession();
+		if(doctor.getPracticeLogged() != null){
+			boolean haspermission = doctorService.hasPermissionToListDoctor(doctor.getId(), doctor.getPracticeLogged().getId());
+			if(!haspermission){
+				practicePlaceAssociationService.logout();
+				return "redirect:/practice-place/list";
+			}	
+		}
+		
 		model.addAttribute("doctor", doctor);
 		model.addAttribute("section", PANEL_SECTION_MEDICAL_SESSIONS);
 		if(patienName!=null){
