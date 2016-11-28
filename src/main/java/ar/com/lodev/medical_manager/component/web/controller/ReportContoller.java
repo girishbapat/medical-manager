@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,9 +22,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
-import ar.com.lodev.medical_manager.component.service.DoctorService;
 import ar.com.lodev.medical_manager.component.service.ReportService;
-import ar.com.lodev.medical_manager.model.dto.DoctorDTO;
 import ar.com.lodev.medical_manager.model.report.dto.BriefConsultReport;
 
 import com.google.gson.Gson;
@@ -45,23 +41,13 @@ public class ReportContoller {
 	@Autowired
 	private ReportService reportService;
 	
-	@Autowired
-	private DoctorService doctorService;
-	
-	
 	@RequestMapping(value="/brief-outline-consultation/build" , method=RequestMethod.POST)
 	public @ResponseBody String buildReport(@RequestParam long sessionId,
 			@RequestParam String report,@RequestParam String files) throws Exception{
 		Gson gson = new Gson();
 		BriefConsultReport reportObject = gson.fromJson(report, BriefConsultReport.class);
 		try {
-			DoctorDTO doctor = doctorService.getFromSession(); 
-			boolean haspermission = doctorService.hasPermissionToListDoctor(doctor.getId(), doctor.getPracticeLogged().getId());
-			if(haspermission){
-				reportService.buildBriefConsultReport(sessionId,reportObject,files);
-			}else{
-				return "401";			
-			}
+			reportService.buildBriefConsultReport(sessionId,reportObject,files);
 		} catch (IOException e) {
 			logger.error("ERROR", e);
 			throw new Exception(e);
@@ -73,11 +59,6 @@ public class ReportContoller {
     @ResponseBody
     public String uploadMultipleFiles(MultipartHttpServletRequest request) {
       //  CommonsMultipartFile multipartFile = null;
-		DoctorDTO doctor = doctorService.getFromSession();
-		boolean haspermission = doctorService.hasPermissionToListDoctor(doctor.getId(), doctor.getPracticeLogged().getId());
-		if(!haspermission){
-			return "401";
-		}
         Iterator<String> iterator = request.getFileNames();
         String filePaths = "";
         String fileName = "";

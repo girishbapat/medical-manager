@@ -32,6 +32,4 @@ public interface DoctorService {
 			String description, String password, MultipartFile photo)
 			throws IOException;
 
-	boolean hasPermissionToListDoctor(Long doctorId, Long practiceId);
-
 }
